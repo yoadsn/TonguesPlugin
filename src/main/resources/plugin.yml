@@ -1,0 +1,10 @@
+name: Tongues
+main: org.gamesforpeace.tongues.TonguesPlugin
+version: 0.3
+
+commands:
+    mylang:
+      description: Setup the player language to be used for translation.
+      usage: /<command> [language], When [language] is not specified - the current setup language is displayed. When "none" is specified, language setup is cleared.
+      permission: mylang
+      permission-message: You don't have the permission '<permission>' to setup the translation language
