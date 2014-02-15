@@ -8,3 +8,8 @@ commands:
       usage: /<command> [language], When [language] is not specified - the current setup language is displayed. When "none" is specified, language setup is cleared.
       permission: mylang
       permission-message: You don't have the permission '<permission>' to setup the translation language
+    whisper:
+      description: Whisper a message to players nearby only
+      usage: /<command> <message>
+      permission: whisper
+      permission-message: You don't have the permission '<permission>' to whisper.
