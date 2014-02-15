@@ -27,6 +27,7 @@ public class WhisperCommandExecutorTest {
 	String[] cmdArgs;
 	String theSentMessage;
 	Player sender;
+	String senderDisplayName;
 	List<Entity> entitiesInRange; 
 	WhisperCommandExecutor SUT;
 	
@@ -35,6 +36,7 @@ public class WhisperCommandExecutorTest {
 		// Setup default values
 		cmdArgs = new String[] {"my", "message"};
 		theSentMessage  = "my message";
+		senderDisplayName = "sender";
 		
 		// Create mocks
 		transReqExec = mock(TranslationRequestExecutor.class);
@@ -43,6 +45,7 @@ public class WhisperCommandExecutorTest {
 			
 		// Default behaviors
 		when(sender.getNearbyEntities(anyDouble(), anyDouble(), anyDouble())).thenReturn(entitiesInRange);
+		when(sender.getDisplayName()).thenReturn(senderDisplayName);
 		
 		// Create SUT
 		SUT = new WhisperCommandExecutor(transReqExec);
@@ -101,7 +104,8 @@ public class WhisperCommandExecutorTest {
 		
 		assertTrue(SUT.onCommand(sender, null, "", cmdArgs));
 		
-		verify(sender).sendMessage(SUT.MSG_YOU_WHISPERED_PREFIX + ": " + theSentMessage);
+		verify(sender).sendMessage(String.format(SUT.MSG_YOU_WHISPERED_PREFIX_FMT, theSentMessage));
+		verify(playerAddedToRange).sendMessage(String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage));
 		verify(transReqExec).postTranslationRequest(theSentMessage, sender, Sets.newSet(playerAddedToRange));
 	}
 	
@@ -113,7 +117,9 @@ public class WhisperCommandExecutorTest {
 		
 		assertTrue(SUT.onCommand(sender, null, "", cmdArgs));
 		
-		verify(sender).sendMessage(SUT.MSG_YOU_WHISPERED_PREFIX + ": " + theSentMessage);
+		verify(sender).sendMessage(String.format(SUT.MSG_YOU_WHISPERED_PREFIX_FMT, theSentMessage));
+		verify(playerAddedToRange).sendMessage(String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage));
+		verify(playerAddedToRange2).sendMessage(String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage));
 		verify(transReqExec).postTranslationRequest(theSentMessage, sender, Sets.newSet(playerAddedToRange, playerAddedToRange2));
 	}
 	
@@ -126,7 +132,8 @@ public class WhisperCommandExecutorTest {
 		
 		assertTrue(SUT.onCommand(sender, null, "", cmdArgs));
 		
-		verify(sender).sendMessage(SUT.MSG_YOU_WHISPERED_PREFIX + ": " + theSentMessage);
+		verify(sender).sendMessage(String.format(SUT.MSG_YOU_WHISPERED_PREFIX_FMT, theSentMessage));
+		verify(playerAddedToRange).sendMessage(String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage));
 		verify(transReqExec).postTranslationRequest(theSentMessage, sender, Sets.newSet(playerAddedToRange));
 		verifyZeroInteractions(zombieAdded);
 	}
