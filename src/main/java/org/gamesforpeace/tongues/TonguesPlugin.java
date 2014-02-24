@@ -11,14 +11,20 @@ import org.gamesforpeace.tongues.translation.ChatTranslationRequestExecutor;
 import org.gamesforpeace.tongues.translation.TranslationRequestExecutor;
 import org.gamesforpeace.tongues.translation.Translator;
 
+import com.avaje.ebeaninternal.api.LoadContext;
+
 public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, TranslationRequestExecutor {
 	
 	private TranslationRequestExecutor translationRequestExecutor;
 	
 	@Override
     public void onEnable(){
-				
-		Translator translator = new BingTranslator("YoadTestTranslate", "bdazTDcXWq71yWcWB2PuLiHvkec89UBNavS8HOfIdqA=");
+		
+		// Will create the default configuration file structure
+		saveDefaultConfig();
+		
+		Translator translator = new BingTranslator(getConfig().getString("bingTranslation.clientID"), getConfig().getString("bingTranslation.secretKey"));
+		
 		PlayerLanguageStore langStore = new ConcurrentPlayerLanguageStore(translator.getSupportedLanguages(),  translator.getDefaultLanguage());
 		translationRequestExecutor = new ChatTranslationRequestExecutor(translator, langStore, this);
 		
