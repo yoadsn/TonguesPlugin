@@ -1,11 +1,15 @@
 Tongues - Translation plugin for Bukkit MC server
 ----------------------------------------------
 
+Warning - This Plugin is not ready for production use.
+Command and permission names would change!
+This is a fast alpha version for internal testing.
+
 Main features:
 - Translates on the fly chat messages
 - Provides a translated "WhisperWithinRadius" command
 - Uses the Bing Translation service (Requires an active account)
-- Allowed each player to configure its own language
+- Allowes each player to configure its own language
 
 Installation:
 Work In Progress...
