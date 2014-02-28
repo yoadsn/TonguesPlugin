@@ -1,6 +1,9 @@
 package org.gamesforpeace.tongues;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +20,7 @@ public class ConcurrentPlayerLanguageStore implements PlayerLanguageStore {
 		this.defaultLanguage = defaultLanguage;
 	}
 	
-	public String GetLanguageForPlayer(UUID playerUUID) {
+	public String getLanguageForPlayer(UUID playerUUID) {
 		
 		String playerStoredLang = languageStore.get(playerUUID);
 		if (playerStoredLang == null) {
@@ -29,9 +32,7 @@ public class ConcurrentPlayerLanguageStore implements PlayerLanguageStore {
 	}
 
 	public void setLanguageForPlayer(UUID playerUUID, String language) {
-		
 		languageStore.put(playerUUID, language);
-		
 	}
 	
 	public void clearLanguageForPlayer(UUID playerUUID) {
@@ -44,6 +45,16 @@ public class ConcurrentPlayerLanguageStore implements PlayerLanguageStore {
 	
 	public String getDefaultLanguage() {
 		return defaultLanguage;
+	}
+
+	public Map<UUID, String> getAllPlayerLanguages() {
+		return Collections.unmodifiableMap(languageStore);
+	}
+
+	public void setPlayerLanguages(Map<UUID, String> playerLanguagesToSet) {
+		for (Entry<UUID, String> languagePlayerSetting : playerLanguagesToSet.entrySet()) {
+			setLanguageForPlayer(languagePlayerSetting.getKey(), languagePlayerSetting.getValue());
+		}
 	}
 	
 }

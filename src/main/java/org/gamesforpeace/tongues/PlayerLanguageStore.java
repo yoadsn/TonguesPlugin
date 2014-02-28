@@ -1,10 +1,11 @@
 package org.gamesforpeace.tongues;
 
+import java.util.Map;
 import java.util.UUID;
 
 public interface PlayerLanguageStore {
 	
-	String GetLanguageForPlayer(UUID playerUUID);
+	String getLanguageForPlayer(UUID playerUUID);
 	
 	/**
 	 * This method does not check to see if the language is supported or not.
@@ -34,4 +35,16 @@ public interface PlayerLanguageStore {
 	 * @return the default language of the this language store
 	 */
 	String getDefaultLanguage();
+	
+	/**
+	 * Gets all non-default player languages stored
+	 * @return All stored non-default player langauges
+	 */
+	Map<UUID, String> getAllPlayerLanguages();
+	
+	/**
+	 * Would use the set of values to override or add to the existing configuration
+	 * @param playerLanguagesToSet - Assumed to contain valid languages
+	 */
+	void setPlayerLanguages(Map<UUID, String> playerLanguagesToSet);
 }

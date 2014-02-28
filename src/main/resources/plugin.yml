@@ -1,6 +1,6 @@
 name: Tongues
 main: org.gamesforpeace.tongues.TonguesPlugin
-version: 0.3
+version: 0.6
 
 commands:
     mylang:

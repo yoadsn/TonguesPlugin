@@ -1,2 +1,23 @@
-Initial README file - nothing to read here yet though.
-------------------------------------------------------
+Tongues - Translation plugin for Bukkit MC server
+----------------------------------------------
+
+Main features:
+- Translates on the fly chat messages
+- Provides a translated "WhisperWithinRadius" command
+- Uses the Bing Translation service (Requires an active account)
+- Allowed each player to configure its own language
+
+Installation:
+Work In Progress...
+
+Usage:
+Work In Progress...
+
+Latest Changes:
+
+Since 0.6:
+- Supports persistence of player's configured language between plugin restarts
+
+Since 0.3:
+- Initial Release
+- Bing translation API authentication data read from config file

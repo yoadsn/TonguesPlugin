@@ -27,7 +27,7 @@ public class MyLangCommandExecutor implements CommandExecutor {
 
 			Player player = (Player) sender;
 
-			String currLang = langStore.GetLanguageForPlayer(player.getUniqueId());
+			String currLang = langStore.getLanguageForPlayer(player.getUniqueId());
 
 			if (args.length == 0) { // Querying the current setup language
 

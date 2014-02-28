@@ -246,7 +246,6 @@ public class ChatTranslationRequestExecutorTest {
 		private ChatMessenger messenger;
 		private Player sourcePlayer;
 		private List<String> destPlayerLangs;
-		private List<UUID> destPlayerUUIDs;
 		private List<Player> destPlayers;
 
 		// Default Values
@@ -267,7 +266,6 @@ public class ChatTranslationRequestExecutorTest {
 			defaultTranslatedMessage = "TRANSLATED";
 
 			destPlayerLangs = new LinkedList<String>();
-			destPlayerUUIDs = new LinkedList<UUID>();
 			destPlayers = new LinkedList<Player>();
 		}
 
@@ -294,7 +292,7 @@ public class ChatTranslationRequestExecutorTest {
 				Player destPlayer = mock(Player.class);
 				UUID uuid = UUID.randomUUID();
 				when(destPlayer.getUniqueId()).thenReturn(uuid);
-				when(langStore.GetLanguageForPlayer(uuid)).thenReturn(
+				when(langStore.getLanguageForPlayer(uuid)).thenReturn(
 						destPlayerLang);
 
 				destPlayers.add(destPlayer);
@@ -303,7 +301,7 @@ public class ChatTranslationRequestExecutorTest {
 			// Stubs
 			when(sourcePlayer.getUniqueId())
 					.thenReturn(defaultSourcePlayerUUID);
-			when(langStore.GetLanguageForPlayer(defaultSourcePlayerUUID))
+			when(langStore.getLanguageForPlayer(defaultSourcePlayerUUID))
 					.thenReturn(defaultSourcePlayerLanguage);
 
 			when(
@@ -340,10 +338,6 @@ public class ChatTranslationRequestExecutorTest {
 		public String getDefaultLang()
 		{
 			return defaultLang;
-		}
-
-		public UUID getDefaultSourcePlayerUUID() {
-			return defaultSourcePlayerUUID;
 		}
 
 		public String getDefaultSourcePlayerLanguage() {

@@ -1,11 +1,16 @@
 package org.gamesforpeace.tongues;
 
+import java.io.IOException;
 import java.util.Set;
+import java.util.logging.Filter;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.gamesforpeace.tongues.persistence.PlayerLanguageStorePersister;
 import org.gamesforpeace.tongues.translation.BingTranslator;
 import org.gamesforpeace.tongues.translation.ChatTranslationRequestExecutor;
 import org.gamesforpeace.tongues.translation.TranslationRequestExecutor;
@@ -16,22 +21,34 @@ import com.avaje.ebeaninternal.api.LoadContext;
 public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, TranslationRequestExecutor {
 	
 	private TranslationRequestExecutor translationRequestExecutor;
+	private PlayerLanguageStore langStore;
 	
 	@Override
     public void onEnable(){
-		
+				
 		// Will create the default configuration file structure
 		saveDefaultConfig();
 		
+		//getLogger().fine("Using Bing Translation authentication values -> ClientID:" + getConfig().getString("bingTranslation.clientID") + " SecretKey:" + getConfig().getString("bingTranslation.secretKey"));
 		Translator translator = new BingTranslator(getConfig().getString("bingTranslation.clientID"), getConfig().getString("bingTranslation.secretKey"));
 		
-		PlayerLanguageStore langStore = new ConcurrentPlayerLanguageStore(translator.getSupportedLanguages(),  translator.getDefaultLanguage());
+		langStore = new ConcurrentPlayerLanguageStore(translator.getSupportedLanguages(),  translator.getDefaultLanguage());
+		
+		// Attempt to load any existing languages configuration of players from persistent store
+		PlayerLanguageStorePersister langStorePersister = null;
+		try {
+			langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), "langStore.dat");
+			if (!langStorePersister.load(langStore)) {
+				getLogger().warning("Could not load player languages upon plugin enable.");
+			}
+		} catch (IOException e) {
+			//getLogger().info(e.getMessage());
+			getLogger().warning("Unable to access player languages persistence store for loading. Skipping.");
+		}
+		
 		translationRequestExecutor = new ChatTranslationRequestExecutor(translator, langStore, this);
 		
-		getLogger().info("Supported langauges: ");
-		for (String lang : translator.getSupportedLanguages()) {
-			getLogger().info(lang);
-		}
+		//getLogger().info("Supported languages: " + translator.getSupportedLanguages().toString());
 		
 		getServer().getPluginManager().registerEvents(new ChatListener(this), this);
 		getServer().getPluginCommand("mylang").setExecutor(new MyLangCommandExecutor(langStore));
@@ -40,6 +57,17 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
  
     @Override
     public void onDisable() {
+    	// Attempt to store any existing languages configuration of players into persistent store
+		PlayerLanguageStorePersister langStorePersister = null;
+		try {
+			langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), "langStore.dat");
+			if (!langStorePersister.persist(langStore)) {
+				getLogger().warning("Could not persist player languages upon plugin disable.");
+			}
+		} catch (IOException e) {
+			//getLogger().info(e.getMessage());
+			getLogger().warning("Unable to access player languages persistence store for storing. Skipping.");
+		}
     }
 	
 	public void sendMessage(String message, Player source, Player dest) {

@@ -33,7 +33,7 @@ public class SetupLangCommandExecutorTest {
 		playerUUID = UUID.randomUUID();
 		
 		when(player.getUniqueId()).thenReturn(playerUUID);
-		when(langStore.GetLanguageForPlayer(playerUUID)).thenReturn(prevPlayerLang);
+		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn(prevPlayerLang);
 		when(langStore.isLanguageSupported(newPlayerLang)).thenReturn(true);
 		
 		sut = new MyLangCommandExecutor(langStore);
@@ -56,7 +56,7 @@ public class SetupLangCommandExecutorTest {
 		assertTrue(sut.onCommand(player, null, null, new String[0]));
 		
 		verify(player).sendMessage(anyString());
-		verify(langStore).GetLanguageForPlayer(playerUUID);
+		verify(langStore).getLanguageForPlayer(playerUUID);
 	}
 	
 	@Test
@@ -93,7 +93,7 @@ public class SetupLangCommandExecutorTest {
 	@Test
 	public void testLanguagePrevLanguageEqualsNewLanguage() {
 		
-		when(langStore.GetLanguageForPlayer(playerUUID)).thenReturn(newPlayerLang);
+		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn(newPlayerLang);
 		
 		assertFalse(sut.onCommand(player, null, null, new String[] { newPlayerLang }));
 		
@@ -108,7 +108,7 @@ public class SetupLangCommandExecutorTest {
 		assertTrue(sut.onCommand(player, null, null, new String[] { newPlayerLang }));
 		
 		verify(player).sendMessage(anyString());
-		verify(langStore).GetLanguageForPlayer(playerUUID);
+		verify(langStore).getLanguageForPlayer(playerUUID);
 		verify(langStore).isLanguageSupported(newPlayerLang);
 		verify(langStore).setLanguageForPlayer(playerUUID, newPlayerLang);
 	}
