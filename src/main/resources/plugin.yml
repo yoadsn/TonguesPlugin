@@ -10,9 +10,9 @@ commands:
     aliases: [lang, setlang]
     usage: |
       /<command> [language]
-      When [language] is not specified - the current setup language is displayed. When "none" is specified, language setup is cleared.
+      When [language] is "?" the current setup language is displayed. When "none" is specified, language setup is cleared.
       Or
-      /<command> [Player] [language]
+      /<command> [player] [language]
       When a player name is specified, the command operates similarly, on another player. (This command can also be invoked from Console)
   tongues.whisper:
     description: Whisper a message to nearby players
