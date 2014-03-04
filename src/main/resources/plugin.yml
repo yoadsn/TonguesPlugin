@@ -1,15 +1,35 @@
 name: Tongues
 main: org.gamesforpeace.tongues.TonguesPlugin
-version: 0.6
+version: 0.6.1
+description: Tongues implements real time translation support for messages between players. Currently Chat and Whisper messages are supported.
 
 commands:
-    mylang:
-      description: Setup the player language to be used for translation.
-      usage: /<command> [language], When [language] is not specified - the current setup language is displayed. When "none" is specified, language setup is cleared.
-      permission: mylang
-      permission-message: You don't have the permission '<permission>' to setup the translation language
-    whisper:
-      description: Whisper a message to players nearby only
-      usage: /<command> <message>
-      permission: whisper
-      permission-message: You don't have the permission '<permission>' to whisper.
+  tongues.setlang:
+    description: Setup the language used for translation of messages sent to the player.
+    permission: tongues.setlang
+    aliases: [lang, setlang]
+    usage: |
+      /<command> [language]
+      When [language] is not specified - the current setup language is displayed. When "none" is specified, language setup is cleared.
+      Or
+      /<command> [Player] [language]
+      When a player name is specified, the command operates similarly, on another player. (This command can also be invoked from Console)
+  tongues.whisper:
+    description: Whisper a message to nearby players
+    permission: tongues.whisper
+    aliases: whisper
+    usage: /<command> <message>
+
+permissions:
+  tongues.setlang:
+    description: Allows a player to setup his language
+    default: true
+  tongues.setlang.others:
+    description: Allows to change other player's language
+    default: op
+    children:
+      tongues.setlange: true
+  tongues.whisper:
+    description: Allows to whisper a message to other players nearby
+    default: true
+     
