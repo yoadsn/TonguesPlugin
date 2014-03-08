@@ -14,9 +14,10 @@ import org.gamesforpeace.tongues.translation.TranslationRequestExecutor;
 public class WhisperCommandExecutor implements CommandExecutor {
 	public static final double DEFAULT_WHISPER_RADIUS = 10;
 	public static final String MSG_NOBODY_TO_WHISPER_TO = "There is no player to whisper to around you";
-	public static final String ERRMSG_EMPTY_MESSAGE = "You must provide a message to whisper";
-	public static final String ERRMSG_NOT_A_PLAYER_WHISPER = "The whisper command must come from a player";
+	public static final String ERR_EMPTY_MESSAGE = "You must provide a message to whisper";
+	public static final String ERR_NOT_A_PLAYER_WHISPER = "The whisper command must come from a player";
 	public static final String MSG_WHISPER_PREFIX_FMT = "%1s (whispered): %2s";
+	public static final String ERR_NO_PERMISSION = "You do not have permission to perform this operation";
 
 	TranslationRequestExecutor translationRequestExecutor;
 	public String MSG_YOU_WHISPERED_PREFIX_FMT = "You whispered: %1s";
@@ -47,10 +48,12 @@ public class WhisperCommandExecutor implements CommandExecutor {
 
 		// This command can only be received from a player
 		if (!(sender instanceof Player)) {
-			message = ERRMSG_NOT_A_PLAYER_WHISPER;
+			message = ERR_NOT_A_PLAYER_WHISPER;
 		} else {
-			if (args.length == 0) {
-				message = ERRMSG_EMPTY_MESSAGE;
+			if (!sender.hasPermission("tongues.whisper")) {
+				message = ERR_NO_PERMISSION;
+			} else if (args.length == 0) {
+				message = ERR_EMPTY_MESSAGE;
 			} else {
 				// Guesstimate the size of the final message
 				StringBuilder sb = new StringBuilder(args.length * 4);
@@ -62,7 +65,7 @@ public class WhisperCommandExecutor implements CommandExecutor {
 				String finalMessage = sb.toString().trim();
 
 				if (finalMessage.isEmpty()) {
-					message = ERRMSG_EMPTY_MESSAGE;
+					message = ERR_EMPTY_MESSAGE;
 				} else {
 					Set<Player> playersInRange = getAnyPlayersInRange((Player) sender);
 					if (playersInRange.size() == 0) {

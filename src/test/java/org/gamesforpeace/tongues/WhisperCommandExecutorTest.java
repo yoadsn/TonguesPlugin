@@ -46,6 +46,7 @@ public class WhisperCommandExecutorTest {
 		// Default behaviors
 		when(sender.getNearbyEntities(anyDouble(), anyDouble(), anyDouble())).thenReturn(entitiesInRange);
 		when(sender.getDisplayName()).thenReturn(senderDisplayName);
+		when(sender.hasPermission("tongues.whisper")).thenReturn(true);
 		
 		// Create SUT
 		SUT = new WhisperCommandExecutor(transReqExec);
@@ -72,8 +73,19 @@ public class WhisperCommandExecutorTest {
 		
 		assertFalse(SUT.onCommand(nonPlayer, null, "", null));
 		
-		verify(nonPlayer).sendMessage(WhisperCommandExecutor.ERRMSG_NOT_A_PLAYER_WHISPER);
+		verify(nonPlayer).sendMessage(WhisperCommandExecutor.ERR_NOT_A_PLAYER_WHISPER);
 		verifyZeroInteractions(transReqExec);
+	}
+	
+	@Test
+	public void testNoPermissions() {
+		
+		SUT = new WhisperCommandExecutor(transReqExec, 1, 2, 3);
+		when(sender.hasPermission("tongues.whisper")).thenReturn(false);
+		
+		assertFalse(SUT.onCommand(sender, null, "", cmdArgs));
+		
+		verify(sender).sendMessage(WhisperCommandExecutor.ERR_NO_PERMISSION);
 	}
 	
 	@Test
@@ -157,7 +169,7 @@ public class WhisperCommandExecutorTest {
 		
 		assertFalse(SUT.onCommand(sender, null, "", emptyArgsList));
 		
-		verify(sender).sendMessage(WhisperCommandExecutor.ERRMSG_EMPTY_MESSAGE);
+		verify(sender).sendMessage(WhisperCommandExecutor.ERR_EMPTY_MESSAGE);
 		verifyZeroInteractions(transReqExec);
 	}
 	
