@@ -1,23 +1,59 @@
-Tongues - Translation plugin for Bukkit MC server
-----------------------------------------------
+#Tongues - Translation plugin for Bukkit MC server
 
-Warning - This Plugin is not ready for production use.
-Command and permission names would change!
-This is a fast alpha version for internal testing.
+*Warning* - This Plugin is not ready for production use.
 
-Main features:
+Tongues implements real time translation support for messages between players.
+Currently Chat and Whisper messages are supported and only the Bing translation API as the translation service.
+
+This is an alpha version, any issues or feature requests are welcome!
+
+##Main features
 - Translates on the fly chat messages
 - Provides a translated "WhisperWithinRadius" command
 - Uses the Bing Translation service (Requires an active account)
-- Allowes each player to configure its own language
+- Allows each player to configure its own language
 
-Installation:
-Work In Progress...
+##Installation
+- Drop the JAR in the plugins folder
+- Reload plugins or start the server
+- Edit the plygin.yml created in the plugin's data folder to set the Bing translation API ClientID and SecretKey
+- Reload again
+- Give permissions 
 
-Usage:
-Work In Progress...
+##Commands
+###tongues.setlang###
+/setlang [language] - Will change the current language of the issuing player.
 
-Latest Changes:
+permissions: Requires permission **tongues.setlang**
+
+/setlang [player] [language] - will change the current language of the specified player. 
+
+permissions: Requires permission **tongues.setlang.others**
+
+When [language] is **none** the command would clear any current setting
+
+When [language] is **?** the command would query and display the current language setting
+
+aliases: setlang, lang 
+
+###tongues.whisper###
+/whisper [message] - Whisper a message to every player in raduis
+
+permissions: Requires permission **tongues.whisper**
+
+aliases: whisper
+
+##Translation Logic
+When a message is sent, the language of the player receiving the message is used to translate the message.
+
+If no language is setup for this player, no translation is attempted or sent.
+The translation is sent in addition to the original message a few moments later.
+
+Currently, If the sending player has a language configured for him, this language is used as the source language.
+
+This behavior might change in a later version since a "French" player might still send some "English" text and expect it to be translated correctly to a "Russian" player.
+
+#Latest Changes
 
 Since 0.7:
 - Permission and command names have changed
