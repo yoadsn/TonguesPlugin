@@ -19,6 +19,10 @@ Work In Progress...
 
 Latest Changes:
 
+Since 0.7:
+- Permission and command names have changed
+- Permission checks were implemented
+
 Since 0.6:
 - Supports persistence of player's configured language between plugin restarts
 

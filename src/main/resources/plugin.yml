@@ -1,6 +1,6 @@
 name: Tongues
 main: org.gamesforpeace.tongues.TonguesPlugin
-version: 0.6.1
+version: 0.7.0
 description: Tongues implements real time translation support for messages between players. Currently Chat and Whisper messages are supported.
 
 commands:
@@ -22,10 +22,10 @@ commands:
 
 permissions:
   tongues.setlang:
-    description: Allows a player to setup his language
+    description: Allows a player to setup/query his language
     default: true
   tongues.setlang.others:
-    description: Allows to change other player's language
+    description: Allows to setup/query other player's language
     default: op
     children:
       tongues.setlange: true

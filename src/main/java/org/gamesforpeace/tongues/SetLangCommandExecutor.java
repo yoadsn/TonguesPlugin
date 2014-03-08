@@ -10,13 +10,14 @@ public class SetLangCommandExecutor implements CommandExecutor {
 
 	public static final String ERR_OWN_LANG_SETUP_MUST_COME_FROM_PLAYER = "Only a Player can act on its own language";
 	public static final String ERR_SETUP_OF_LANGAUGE_FOR_OFFLINE_PLAYER_NOT_ALLOWED = "You can only setup a language for an online player";
-	public static final String ERR_INVALID_COMMAND_ARGUMENTS = "The provided arguments are invalid.";
+	public static final String ERR_INVALID_COMMAND_ARGUMENTS = "The provided arguments are invalid";
 	public static final String MSG_PLAYER_LANG_CHANGED_FMT = "The Langauge of player %1s changed to %2s";
 	public static final String MSG_LANG_OF_PLAYER_IS_FMT = "The langauge of player %1s is %2s";
 	public static final String MSG_NO_LANG_CONFIGURED_FOR_PLAYER_FMT = "No langauge is configured for player %1s";
-	public static final String ERR_LANG_NOT_SUPPORTED_FMT = "The language %1s is not supported.";
+	public static final String ERR_LANG_NOT_SUPPORTED_FMT = "The language %1s is not supported";
 	public static final String MSG_CLEARED_SETUP_LANG = "Language setup was cleared";
 	public static final String MSG_LANG_IS_ALREADY_SETUP_FTM = "Current language is already %1s";
+	public static final String ERR_NO_PERMISSION = "You do not have the permissions to perform this operation";
 
 	public final String CLEAR_SETUP_LANG = "none";
 	public final String QUERY_SETUP_LANG = "?";
@@ -33,9 +34,12 @@ public class SetLangCommandExecutor implements CommandExecutor {
 
 		Boolean success = false;
 		String responseMessage = "";
-
-		// Syntax check
-		if (args.length > 2 || args.length == 0) {
+		
+		// Verify basic permission is present
+		if (!sender.hasPermission("tongues.setlang")) {
+			responseMessage = ERR_NO_PERMISSION;
+		} else if (args.length > 2 || args.length == 0) {
+			// Syntax check
 			responseMessage = ERR_INVALID_COMMAND_ARGUMENTS;
 		} else {
 
@@ -44,15 +48,20 @@ public class SetLangCommandExecutor implements CommandExecutor {
 
 			// Which player to operate on?
 			if (args.length == 2) {
-				// TODO: Check permissions
-
-				// Get the player from the server
-				Player possibleSubject = server.getPlayer(args[0]);
-				if (possibleSubject == null || !possibleSubject.isOnline()) {
-					responseMessage = ERR_SETUP_OF_LANGAUGE_FOR_OFFLINE_PLAYER_NOT_ALLOWED;
+				// This requires an additional permission
+				if (!sender.hasPermission("tongues.setlang.others")) {
+					
+					responseMessage = ERR_NO_PERMISSION;
 				} else {
-					subjectOfCommand = possibleSubject;
-					changeToLang = args[1].toLowerCase();
+
+					// Get the player from the server
+					Player possibleSubject = server.getPlayer(args[0]);
+					if (possibleSubject == null || !possibleSubject.isOnline()) {
+						responseMessage = ERR_SETUP_OF_LANGAUGE_FOR_OFFLINE_PLAYER_NOT_ALLOWED;
+					} else {
+						subjectOfCommand = possibleSubject;
+						changeToLang = args[1].toLowerCase();
+					}
 				}
 			} else { // single arg
 				// The sender is the subject
