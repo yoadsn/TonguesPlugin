@@ -75,12 +75,13 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		final Player sendFrom = source;
 		final Player sendTo = dest;
 		final String sendMessage = message;
+		final String destinationLanguage = langStore.getLanguageForPlayer(sendTo.getUniqueId());
 		
 		new BukkitRunnable() {
 			
 			public void run() {
 				
-				sendTo.sendMessage(sendFrom.getDisplayName() + " (Translated): " +  sendMessage);
+				sendTo.sendMessage(sendFrom.getDisplayName() + " (" + destinationLanguage + "): " +  sendMessage);
 			}
 		}.runTask(this);
 	}
