@@ -49,9 +49,9 @@ When a message is sent, the language of the player receiving the message is used
 If no language is setup for this player, no translation is attempted or sent.
 The translation is sent in addition to the original message a few moments later.
 
-Currently, If the sending player has a language configured for him, this language is used as the source language.
+Currently, regardless of the sending player's configured language, an auto-detection of the message source language is done.
 
-This behavior might change in a later version since a "French" player might still send some "English" text and expect it to be translated correctly to a "Russian" player.
+So for example, a "French" configured player might still send some "English" text and expect it to be translated correctly to a "Russian" configured player.
 
 #Latest Changes
 

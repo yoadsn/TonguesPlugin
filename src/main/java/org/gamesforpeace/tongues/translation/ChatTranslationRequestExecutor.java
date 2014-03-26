@@ -33,7 +33,8 @@ public class ChatTranslationRequestExecutor implements TranslationRequestExecuto
 		HashMap<Player, String> languagesOfPlayers = new HashMap<Player, String>();
 		HashMap<String, String> translationsOfMessages = new HashMap<String, String>();
 
-		String langOfSourcePlayer = playerLanguageStore.getLanguageForPlayer(sourcePlayer.getUniqueId());
+		// Always treat the source player langauge as the default, causing auto detection of translation
+		String langOfSourcePlayer = playerLanguageStore.getDefaultLanguage();
 
 		// Extracting dest Languages
 		for (Player destPlayer : destinationPlayers) {
@@ -56,7 +57,7 @@ public class ChatTranslationRequestExecutor implements TranslationRequestExecuto
 		for (Entry<Player, String> destPlayerAndLang : languagesOfPlayers.entrySet()) {
 			String translatedMessage = translationsOfMessages.get(destPlayerAndLang.getValue());
 
-			if (translatedMessage != null)
+			if (translatedMessage != null && !translatedMessage.equals(message))
 				messenger.sendMessage(translatedMessage, sourcePlayer, destPlayerAndLang.getKey());
 		}
 

@@ -92,7 +92,7 @@ public class ChatTranslationRequestExecutorTest {
 	}
 
 	@Test
-	public void testNotTranslatingSourceLanguageEqualsDest() {
+	public void testAlwaysAssumingSourcePlayerLanguageIsDefaultLanguage() {
 		// Setup
 		SUTBuilder builder = SUTBuilder.getSutBuilder();
 		builder
@@ -105,15 +105,15 @@ public class ChatTranslationRequestExecutorTest {
 				builder.getDestPlayersHash());
 
 		// Assert
-		verifyZeroInteractions(builder.getTranslator());
+		verify(builder.getTranslator()).translate(builder.getDefaultSourceMessage(), builder.getDefaultLang(), "same");
 	}
 	
 	@Test
-	public void testNotSendingMessageSourceLanguageEqualsDest() {
+	public void testNotSendingMessageWhenTranslationEqualsSource() {
 		// Setup
 		SUTBuilder builder = SUTBuilder.getSutBuilder();
 		builder
-		.withSourcePlayerLang("same")
+		.withTranslatedMessage(builder.getDefaultSourceMessage())
 		.addDestPlayerWithLang("same");
 
 		// Act
@@ -123,22 +123,6 @@ public class ChatTranslationRequestExecutorTest {
 
 		// Assert
 		verifyZeroInteractions(builder.getMessenger());
-	}
-
-	@Test
-	public void testTranslatingSourceLanguageDifferentFromDest() {
-		// Setup
-		SUTBuilder builder = SUTBuilder.getSutBuilder();
-		builder
-		.addDestPlayerWithLang("other");
-
-		// Act
-		builder.buildSUT().postTranslationRequest(
-				builder.getDefaultSourceMessage(), builder.getSourcePlayer(),
-				builder.getDestPlayersHash());
-
-		// Assert
-		verify(builder.getTranslator(), times(1)).translate(anyString(), eq(builder.getDefaultSourcePlayerLanguage()), eq("other"));
 	}
 
 	@Test
@@ -155,8 +139,8 @@ public class ChatTranslationRequestExecutorTest {
 				builder.getDestPlayersHash());
 
 		// Assert
-		verify(builder.getTranslator(), times(1)).translate(anyString(), eq(builder.getDefaultSourcePlayerLanguage()), eq("other"));
-		verify(builder.getTranslator(), times(1)).translate(anyString(), eq(builder.getDefaultSourcePlayerLanguage()), eq("other2"));
+		verify(builder.getTranslator(), times(1)).translate(anyString(), eq(builder.getDefaultLang()), eq("other"));
+		verify(builder.getTranslator(), times(1)).translate(anyString(), eq(builder.getDefaultLang()), eq("other2"));
 	}
 
 	@Test
@@ -173,7 +157,7 @@ public class ChatTranslationRequestExecutorTest {
 				builder.getDestPlayersHash());
 
 		// Assert
-		verify(builder.getTranslator(), times(1)).translate(anyString(), eq(builder.getDefaultSourcePlayerLanguage()), eq("other"));
+		verify(builder.getTranslator(), times(1)).translate(anyString(), eq(builder.getDefaultLang()), eq("other"));
 	}
 
 	@Test
@@ -276,6 +260,11 @@ public class ChatTranslationRequestExecutorTest {
 
 		public SUTBuilder addDestPlayerWithLang(String lang) {
 			destPlayerLangs.add(lang);
+			return this;
+		}
+		
+		public SUTBuilder withTranslatedMessage(String translatedMessage) {
+			defaultTranslatedMessage = translatedMessage;
 			return this;
 		}
 
