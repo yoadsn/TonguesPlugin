@@ -26,7 +26,6 @@ public class SetLangCommandExecutorTest {
 	String playerName = "playerName";
 	Player executingPlayer;
 	Server mockedServer;
-	UUID playerUUID;
 	String prevPlayerLang = "english";
 	String newPlayerLang = "hebrew";
 	ConsoleCommandSender nonPlayerSender;
@@ -40,13 +39,9 @@ public class SetLangCommandExecutorTest {
 		executingPlayer = mock(Player.class);
 		nonPlayerSender = mock(ConsoleCommandSender.class);
 		
-		playerUUID = UUID.randomUUID();
-		
-		when(player.getUniqueId()).thenReturn(playerUUID);
 		when(player.getName()).thenReturn(playerName);
 		when(player.isOnline()).thenReturn(true);
 		
-		when(executingPlayer.getUniqueId()).thenReturn(playerUUID);
 		when(executingPlayer.getName()).thenReturn(playerName);
 		when(executingPlayer.isOnline()).thenReturn(true);
 		when(executingPlayer.hasPermission("tongues.setlang")).thenReturn(true);
@@ -54,7 +49,7 @@ public class SetLangCommandExecutorTest {
 		when(mockedServer.getPlayer(playerName)).thenReturn(player);
 		
 		when(langStore.getDefaultLanguage()).thenReturn("");
-		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn(prevPlayerLang);
+		when(langStore.getLanguageForPlayer(playerName)).thenReturn(prevPlayerLang);
 		when(langStore.isLanguageSupported(newPlayerLang)).thenReturn(true);
 		
 		when(nonPlayerSender.hasPermission("tongues.setlang")).thenReturn(true);
@@ -105,24 +100,24 @@ public class SetLangCommandExecutorTest {
 	@Test
 	public void queryOtherPlayerLangNotSetupfromConsole() {
 		
-		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn("");
+		when(langStore.getLanguageForPlayer(playerName)).thenReturn("");
 		
 		assertTrue(sut.onCommand(nonPlayerSender, null, null, new String[] { playerName, "?" }));
 		
 		verify(nonPlayerSender).sendMessage(String.format(SetLangCommandExecutor.MSG_NO_LANG_CONFIGURED_FOR_PLAYER_FMT, playerName));
-		verify(langStore).getLanguageForPlayer(playerUUID);
+		verify(langStore).getLanguageForPlayer(playerName);
 	}
 	
 	@Test
 	public void queryOtherPlayerLangSetupfromConsole() {
 		
 		
-		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn(newPlayerLang);
+		when(langStore.getLanguageForPlayer(playerName)).thenReturn(newPlayerLang);
 		
 		assertTrue(sut.onCommand(nonPlayerSender, null, null, new String[] { playerName, "?" }));
 		
 		verify(nonPlayerSender).sendMessage(String.format(SetLangCommandExecutor.MSG_LANG_OF_PLAYER_IS_FMT, playerName, newPlayerLang));
-		verify(langStore).getLanguageForPlayer(playerUUID);
+		verify(langStore).getLanguageForPlayer(playerName);
 	}
 	
 	@Test
@@ -142,7 +137,7 @@ public class SetLangCommandExecutorTest {
 		assertTrue(sut.onCommand(nonPlayerSender, null, null, new String[] {playerName, newPlayerLang}));
 		
 		verify(nonPlayerSender).sendMessage(String.format(SetLangCommandExecutor.MSG_PLAYER_LANG_CHANGED_FMT, playerName, newPlayerLang));
-		verify(langStore).setLanguageForPlayer(playerUUID, newPlayerLang);
+		verify(langStore).setLanguageForPlayer(playerName, newPlayerLang);
 	}
 	
 	/**
@@ -162,23 +157,23 @@ public class SetLangCommandExecutorTest {
 	@Test
 	public void queryOtherPlayerLangNotSetup() {
 		when(executingPlayer.hasPermission("tongues.setlang.others")).thenReturn(true);
-		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn("");
+		when(langStore.getLanguageForPlayer(playerName)).thenReturn("");
 		
 		assertTrue(sut.onCommand(executingPlayer, null, null, new String[] { playerName, "?" }));
 		
 		verify(executingPlayer).sendMessage(String.format(SetLangCommandExecutor.MSG_NO_LANG_CONFIGURED_FOR_PLAYER_FMT, playerName));
-		verify(langStore).getLanguageForPlayer(playerUUID);
+		verify(langStore).getLanguageForPlayer(playerName);
 	}
 	
 	@Test
 	public void queryOtherPlayerLangSetup() {
 		when(executingPlayer.hasPermission("tongues.setlang.others")).thenReturn(true);
-		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn(newPlayerLang);
+		when(langStore.getLanguageForPlayer(playerName)).thenReturn(newPlayerLang);
 		
 		assertTrue(sut.onCommand(executingPlayer, null, null, new String[] { playerName, "?" }));
 		
 		verify(executingPlayer).sendMessage(String.format(SetLangCommandExecutor.MSG_LANG_OF_PLAYER_IS_FMT, playerName, newPlayerLang));
-		verify(langStore).getLanguageForPlayer(playerUUID);
+		verify(langStore).getLanguageForPlayer(playerName);
 	}
 	
 	@Test
@@ -198,7 +193,7 @@ public class SetLangCommandExecutorTest {
 		assertTrue(sut.onCommand(executingPlayer, null, null, new String[] {playerName, newPlayerLang}));
 		
 		verify(executingPlayer).sendMessage(String.format(SetLangCommandExecutor.MSG_PLAYER_LANG_CHANGED_FMT, playerName, newPlayerLang));
-		verify(langStore).setLanguageForPlayer(playerUUID, newPlayerLang);
+		verify(langStore).setLanguageForPlayer(playerName, newPlayerLang);
 	}
 	
 	/**
@@ -218,23 +213,23 @@ public class SetLangCommandExecutorTest {
 	@Test
 	public void queryOwnLangNotSetup() {
 		
-		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn("");
+		when(langStore.getLanguageForPlayer(playerName)).thenReturn("");
 		
 		assertTrue(sut.onCommand(executingPlayer, null, null, new String[] { "?" }));
 		
 		verify(executingPlayer).sendMessage(String.format(SetLangCommandExecutor.MSG_NO_LANG_CONFIGURED_FOR_PLAYER_FMT, playerName));
-		verify(langStore).getLanguageForPlayer(playerUUID);
+		verify(langStore).getLanguageForPlayer(playerName);
 	}
 	
 	@Test
 	public void queryOwnLangSetup() {
 		
-		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn(newPlayerLang);
+		when(langStore.getLanguageForPlayer(playerName)).thenReturn(newPlayerLang);
 	
 		assertTrue(sut.onCommand(executingPlayer, null, null, new String[] { "?" }));
 		
 		verify(executingPlayer).sendMessage(String.format(SetLangCommandExecutor.MSG_LANG_OF_PLAYER_IS_FMT, playerName, newPlayerLang));
-		verify(langStore).getLanguageForPlayer(playerUUID);
+		verify(langStore).getLanguageForPlayer(playerName);
 	}
 	
 	/**
@@ -250,7 +245,7 @@ public class SetLangCommandExecutorTest {
 		
 		verify(executingPlayer).sendMessage(String.format(SetLangCommandExecutor.ERR_LANG_NOT_SUPPORTED_FMT, newPlayerLang));
 		verify(langStore).isLanguageSupported(newPlayerLang);
-		verify(langStore, never()).setLanguageForPlayer(Matchers.any(UUID.class), anyString());
+		verify(langStore, never()).setLanguageForPlayer(Matchers.anyString(), anyString());
 	}
 	
 	@Test
@@ -260,19 +255,19 @@ public class SetLangCommandExecutorTest {
 		
 		verify(executingPlayer).sendMessage(SetLangCommandExecutor.MSG_CLEARED_SETUP_LANG);
 		verify(langStore, never()).isLanguageSupported(anyString());
-		verify(langStore).clearLanguageForPlayer(player.getUniqueId());
+		verify(langStore).clearLanguageForPlayer(player.getName());
 	}
 	
 	@Test
 	public void languagePrevLanguageEqualsNewLanguage() {
 		
-		when(langStore.getLanguageForPlayer(playerUUID)).thenReturn(newPlayerLang);
+		when(langStore.getLanguageForPlayer(playerName)).thenReturn(newPlayerLang);
 		
 		assertFalse(sut.onCommand(executingPlayer, null, null, new String[] { newPlayerLang }));
 		
 		verify(executingPlayer).sendMessage(String.format(SetLangCommandExecutor.MSG_LANG_IS_ALREADY_SETUP_FTM, newPlayerLang));
 		verify(langStore, never()).isLanguageSupported(newPlayerLang);
-		verify(langStore, never()).setLanguageForPlayer(Matchers.any(UUID.class), anyString());
+		verify(langStore, never()).setLanguageForPlayer(Matchers.anyString(), anyString());
 	}
 	
 	@Test
@@ -282,9 +277,9 @@ public class SetLangCommandExecutorTest {
 		
 		verify(executingPlayer).sendMessage(String.format(SetLangCommandExecutor.MSG_PLAYER_LANG_CHANGED_FMT, playerName, newPlayerLang));
 		
-		verify(langStore).getLanguageForPlayer(playerUUID);
+		verify(langStore).getLanguageForPlayer(playerName);
 		verify(langStore).isLanguageSupported(newPlayerLang);
-		verify(langStore).setLanguageForPlayer(playerUUID, newPlayerLang);
+		verify(langStore).setLanguageForPlayer(playerName, newPlayerLang);
 	}
 	
 	@Test

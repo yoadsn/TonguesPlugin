@@ -38,7 +38,7 @@ public class ChatTranslationRequestExecutor implements TranslationRequestExecuto
 
 		// Extracting dest Languages
 		for (Player destPlayer : destinationPlayers) {
-			String langOfDestPlayer = playerLanguageStore.getLanguageForPlayer(destPlayer.getUniqueId());
+			String langOfDestPlayer = playerLanguageStore.getLanguageForPlayer(destPlayer.getName());
 
 			// A dest with the default lang - should not get a translation.
 			if (!langOfDestPlayer.equalsIgnoreCase(playerLanguageStore.getDefaultLanguage())

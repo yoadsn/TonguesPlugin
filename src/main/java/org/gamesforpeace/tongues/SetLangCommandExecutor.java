@@ -76,7 +76,7 @@ public class SetLangCommandExecutor implements CommandExecutor {
 			// We have a player to operate on
 			if (subjectOfCommand != null) {
 
-				String currLang = langStore.getLanguageForPlayer(subjectOfCommand.getUniqueId());
+				String currLang = langStore.getLanguageForPlayer(subjectOfCommand.getName());
 
 				if (changeToLang.equalsIgnoreCase(QUERY_SETUP_LANG)) {
 					if (currLang.equalsIgnoreCase(langStore.getDefaultLanguage())) {
@@ -93,7 +93,7 @@ public class SetLangCommandExecutor implements CommandExecutor {
 					responseMessage = String.format(MSG_LANG_IS_ALREADY_SETUP_FTM, changeToLang);
 					
 				} else if (changeToLang.equalsIgnoreCase(CLEAR_SETUP_LANG)) {
-					langStore.clearLanguageForPlayer(subjectOfCommand.getUniqueId());
+					langStore.clearLanguageForPlayer(subjectOfCommand.getName());
 					responseMessage = MSG_CLEARED_SETUP_LANG;
 
 					success = true;
@@ -103,7 +103,7 @@ public class SetLangCommandExecutor implements CommandExecutor {
 						responseMessage = String.format(ERR_LANG_NOT_SUPPORTED_FMT, changeToLang);
 
 					} else {
-						langStore.setLanguageForPlayer(subjectOfCommand.getUniqueId(), changeToLang);
+						langStore.setLanguageForPlayer(subjectOfCommand.getName(), changeToLang);
 						responseMessage = String.format(MSG_PLAYER_LANG_CHANGED_FMT, subjectOfCommand.getName(),
 								changeToLang);
 

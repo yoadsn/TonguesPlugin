@@ -5,23 +5,23 @@ import java.util.UUID;
 
 public interface PlayerLanguageStore {
 	
-	String getLanguageForPlayer(UUID playerUUID);
+	String getLanguageForPlayer(String playerName);
 	
 	/**
 	 * This method does not check to see if the language is supported or not.
 	 * It is the callers responsibility to consult "IsLanguageSupported" if required.
-	 * @param playerUUID
+	 * @param playerName
 	 * @param language - assumed to always be a lowercase langauge name
 	 * @return
 	 */
-	void setLanguageForPlayer(UUID playerUUID, String language);
+	void setLanguageForPlayer(String playerName, String language);
 	
 	/**
 	 * This method clears the setup language of a player
-	 * @param playerUUID
+	 * @param playerName
 	 * @return
 	 */
-	void clearLanguageForPlayer(UUID playerUUID);
+	void clearLanguageForPlayer(String playerName);
 
 	/**
 	 * Checks if this store supports the language
@@ -40,11 +40,11 @@ public interface PlayerLanguageStore {
 	 * Gets all non-default player languages stored
 	 * @return All stored non-default player langauges
 	 */
-	Map<UUID, String> getAllPlayerLanguages();
+	Map<String, String> getAllPlayerLanguages();
 	
 	/**
 	 * Would use the set of values to override or add to the existing configuration
 	 * @param playerLanguagesToSet - Assumed to contain valid languages
 	 */
-	void setPlayerLanguages(Map<UUID, String> playerLanguagesToSet);
+	void setPlayerLanguages(Map<String, String> playerLanguagesToSet);
 }

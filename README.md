@@ -37,7 +37,7 @@ When [language] is **?** the command would query and display the current languag
 aliases: setlang, lang 
 
 ###tongues.whisper###
-/whisper [message] - Whisper a message to every player in raduis
+/whisper [message] - Whisper a message to every player in radius
 
 permissions: Requires permission **tongues.whisper**
 
@@ -54,6 +54,9 @@ Currently, regardless of the sending player's configured language, an auto-detec
 So for example, a "French" configured player might still send some "English" text and expect it to be translated correctly to a "Russian" configured player.
 
 #Latest Changes
+
+Since 0.8:
+- All identification of a Player is done by it's user name instead of it's UUID.
 
 Since 0.7:
 - Permission and command names have changed

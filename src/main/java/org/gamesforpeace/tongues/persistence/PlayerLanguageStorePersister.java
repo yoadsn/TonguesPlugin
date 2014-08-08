@@ -41,7 +41,7 @@ public class PlayerLanguageStorePersister {
 	public boolean persist(PlayerLanguageStore langStore) {
 		File outputDataFile = getDataFile();
 		if (outputDataFile != null) {
-			Map<UUID, String> allPlayerLangs = langStore.getAllPlayerLanguages();
+			Map<String, String> allPlayerLangs = langStore.getAllPlayerLanguages();
 			FileOutputStream fouts;
 			try {
 				fouts = new FileOutputStream(outputDataFile);
@@ -69,7 +69,7 @@ public class PlayerLanguageStorePersister {
 			try {
 				fins = new FileInputStream(inputDataFile);
 				ObjectInputStream objins = new ObjectInputStream(fins);
-				Map<UUID, String> allPlayerLangs = (Map<UUID, String>) objins.readObject();
+				Map<String, String> allPlayerLangs = (Map<String, String>) objins.readObject();
 				objins.close();
 				
 				langStore.setPlayerLanguages(allPlayerLangs);

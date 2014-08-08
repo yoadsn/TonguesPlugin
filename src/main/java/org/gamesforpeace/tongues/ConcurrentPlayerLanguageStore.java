@@ -11,32 +11,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConcurrentPlayerLanguageStore implements PlayerLanguageStore {
 
 	private final HashSet<String> supportedLanguages; 
-	private final ConcurrentHashMap<UUID, String> languageStore;
+	private final ConcurrentHashMap<String, String> languageStore;
 	private final String defaultLanguage;
 	
 	public ConcurrentPlayerLanguageStore(Set<String> supportedLnaguages, String defaultLanguage) {
 		this.supportedLanguages = new HashSet<String>(supportedLnaguages);
-		languageStore = new ConcurrentHashMap<UUID, String>();
+		languageStore = new ConcurrentHashMap<String, String>();
 		this.defaultLanguage = defaultLanguage;
 	}
 	
-	public String getLanguageForPlayer(UUID playerUUID) {
+	public String getLanguageForPlayer(String playerName) {
 		
-		String playerStoredLang = languageStore.get(playerUUID);
+		String playerStoredLang = languageStore.get(playerName);
 		if (playerStoredLang == null) {
 			playerStoredLang = defaultLanguage;
-			languageStore.put(playerUUID, defaultLanguage);
+			languageStore.put(playerName, defaultLanguage);
 		}
 
 		return playerStoredLang;
 	}
 
-	public void setLanguageForPlayer(UUID playerUUID, String language) {
-		languageStore.put(playerUUID, language);
+	public void setLanguageForPlayer(String playerName, String language) {
+		languageStore.put(playerName, language);
 	}
 	
-	public void clearLanguageForPlayer(UUID playerUUID) {
-		languageStore.remove(playerUUID);
+	public void clearLanguageForPlayer(String playerName) {
+		languageStore.remove(playerName);
 	}
 
 	public Boolean isLanguageSupported(String language) {
@@ -47,12 +47,12 @@ public class ConcurrentPlayerLanguageStore implements PlayerLanguageStore {
 		return defaultLanguage;
 	}
 
-	public Map<UUID, String> getAllPlayerLanguages() {
+	public Map<String, String> getAllPlayerLanguages() {
 		return Collections.unmodifiableMap(languageStore);
 	}
 
-	public void setPlayerLanguages(Map<UUID, String> playerLanguagesToSet) {
-		for (Entry<UUID, String> languagePlayerSetting : playerLanguagesToSet.entrySet()) {
+	public void setPlayerLanguages(Map<String, String> playerLanguagesToSet) {
+		for (Entry<String, String> languagePlayerSetting : playerLanguagesToSet.entrySet()) {
 			setLanguageForPlayer(languagePlayerSetting.getKey(), languagePlayerSetting.getValue());
 		}
 	}
