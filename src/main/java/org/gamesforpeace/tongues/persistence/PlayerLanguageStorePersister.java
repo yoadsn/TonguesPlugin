@@ -1,21 +1,30 @@
 package org.gamesforpeace.tongues.persistence;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.gamesforpeace.tongues.PlayerLanguageStore;
 
+import com.google.common.base.Charsets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+
 public class PlayerLanguageStorePersister {
 	
+	private final Gson gson;
 	public final String storageFileName;
 	private File datafolder = null;
 	private File dataFile = null;
@@ -24,6 +33,7 @@ public class PlayerLanguageStorePersister {
 		Validate.notNull(dataFolder);
 		Validate.notEmpty(storageFileName);
 		
+		this.gson = new GsonBuilder().setPrettyPrinting().create();
 		this.datafolder = dataFolder;
 		this.storageFileName = storageFileName;
 		
@@ -42,12 +52,17 @@ public class PlayerLanguageStorePersister {
 		File outputDataFile = getDataFile();
 		if (outputDataFile != null) {
 			Map<String, String> allPlayerLangs = langStore.getAllPlayerLanguages();
-			FileOutputStream fouts;
+			
 			try {
-				fouts = new FileOutputStream(outputDataFile);
-				ObjectOutputStream objouts = new ObjectOutputStream(fouts);
-				objouts.writeObject(allPlayerLangs);
-				objouts.close();
+				
+				OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(outputDataFile), Charsets.UTF_8);
+				BufferedWriter writer = new BufferedWriter(osw);
+				
+				try{
+					writer.write(gson.toJson(allPlayerLangs));
+				} finally {
+					writer.close();
+				}
 				
 				return true;
 			} catch (FileNotFoundException e) {
@@ -60,27 +75,27 @@ public class PlayerLanguageStorePersister {
 		return false;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public boolean load(PlayerLanguageStore langStore) {
 		File inputDataFile = getDataFile();
 		if (inputDataFile != null) {
 			
-			FileInputStream fins;
+			
 			try {
-				fins = new FileInputStream(inputDataFile);
-				ObjectInputStream objins = new ObjectInputStream(fins);
-				Map<String, String> allPlayerLangs = (Map<String, String>) objins.readObject();
-				objins.close();
+				InputStreamReader isr = new InputStreamReader( new FileInputStream(inputDataFile), Charsets.UTF_8);
+				JsonReader reader = new JsonReader(isr);
 				
+				Type typeOfHashMap = new TypeToken<Map<String, String>>() { }.getType();
+				Map<String, String> allPlayerLangs = gson.fromJson(reader, typeOfHashMap);
+
 				langStore.setPlayerLanguages(allPlayerLangs);
+				
+				reader.close();
 				
 				return true;
 			} catch (FileNotFoundException e) {
 
 			} catch (IOException e) {
 
-			} catch (ClassNotFoundException e) {
-				
 			}
 		}
 		

@@ -53,10 +53,27 @@ Currently, regardless of the sending player's configured language, an auto-detec
 
 So for example, a "French" configured player might still send some "English" text and expect it to be translated correctly to a "Russian" configured player.
 
+#Language Configuration
+Language settings per player are stored in the file **langStore.json** in the plugin's data folder.
+This file contains a single JSON object. The keys of this object are the player name and the values are the language.
+Configuration of the language is stored in the file when the plugin is disabled and read then the plugin is enabled.
+It is possible to edit the configuration with a normal text editor but please note:
+- The file must contain a single valid JSON object in the format described above.
+- A restart of the plugin is required to read configuration which was edited directly in the file.
+
+Example of a valid JSON object:
+```JSON
+{
+  "playerName1": "arabic",
+  "playerName2": "hebrew"
+}
+```
+
 #Latest Changes
 
 Since 0.8:
 - All identification of a Player is done by it's user name instead of it's UUID.
+- Configuration of player language is persisted in a JSON format
 
 Since 0.7:
 - Permission and command names have changed

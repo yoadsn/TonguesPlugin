@@ -48,6 +48,11 @@
 			<artifactId>hamcrest-library</artifactId>
 			<version>1.3</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -61,6 +66,7 @@
 					<artifactSet>
 						<includes>
 							<include>com.memetix:microsoft-translator-java-api</include>
+							<include>com.google.code.gson:gson</include>
 						</includes>
 					</artifactSet>
 				</configuration>
@@ -75,6 +81,10 @@
 								<relocation>
 									<pattern>com.memetix</pattern>
 									<shadedPattern>org.gamesforpeace.memetix</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>com.google.code.gson</pattern>
+									<shadedPattern>org.gamesforpeace.gson</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>
@@ -106,6 +116,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
 	</build>
 

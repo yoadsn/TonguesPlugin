@@ -2,9 +2,6 @@ package org.gamesforpeace.tongues;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.logging.Filter;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.entity.Player;
@@ -16,10 +13,9 @@ import org.gamesforpeace.tongues.translation.ChatTranslationRequestExecutor;
 import org.gamesforpeace.tongues.translation.TranslationRequestExecutor;
 import org.gamesforpeace.tongues.translation.Translator;
 
-import com.avaje.ebeaninternal.api.LoadContext;
-
 public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, TranslationRequestExecutor {
 	
+	private final String LANG_STORE_FILENAME = "langStore.json";
 	private TranslationRequestExecutor translationRequestExecutor;
 	private PlayerLanguageStore langStore;
 	
@@ -37,12 +33,11 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		// Attempt to load any existing languages configuration of players from persistent store
 		PlayerLanguageStorePersister langStorePersister = null;
 		try {
-			langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), "langStore.dat");
+			langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), LANG_STORE_FILENAME);
 			if (!langStorePersister.load(langStore)) {
-				getLogger().warning("Could not load player languages upon plugin enable.");
+				getLogger().warning("Could not load player languages configuration file upon plugin enable.");
 			}
 		} catch (IOException e) {
-			//getLogger().info(e.getMessage());
 			getLogger().warning("Unable to access player languages persistence store for loading. Skipping.");
 		}
 		
@@ -60,7 +55,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
     	// Attempt to store any existing languages configuration of players into persistent store
 		PlayerLanguageStorePersister langStorePersister = null;
 		try {
-			langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), "langStore.dat");
+			langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), LANG_STORE_FILENAME);
 			if (!langStorePersister.persist(langStore)) {
 				getLogger().warning("Could not persist player languages upon plugin disable.");
 			}
