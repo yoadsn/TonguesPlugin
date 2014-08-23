@@ -92,7 +92,7 @@ Example of a valid language configuration JSON object:
 
 Since 0.9:
 - Added the **talk** command
-- Blocked global chat by default and redirected to it to the **talk** command
+- Blocked global chat by default and redirected it to the **talk** command
 
 Since 0.8:
 - All identification of a Player is done by it's user name instead of it's UUID.
