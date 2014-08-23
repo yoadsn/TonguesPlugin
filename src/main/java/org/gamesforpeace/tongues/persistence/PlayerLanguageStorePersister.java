@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.Validate;
 import org.gamesforpeace.tongues.PlayerLanguageStore;
@@ -24,15 +25,17 @@ import com.google.gson.stream.JsonReader;
 
 public class PlayerLanguageStorePersister {
 	
+	private final Logger logger;
 	private final Gson gson;
 	public final String storageFileName;
 	private File datafolder = null;
 	private File dataFile = null;
 	
-	public PlayerLanguageStorePersister(File dataFolder, String storageFileName) throws IOException {
+	public PlayerLanguageStorePersister(File dataFolder, String storageFileName, Logger logger) throws IOException {
 		Validate.notNull(dataFolder);
 		Validate.notEmpty(storageFileName);
 		
+		this.logger = logger;
 		this.gson = new GsonBuilder().setPrettyPrinting().create();
 		this.datafolder = dataFolder;
 		this.storageFileName = storageFileName;
@@ -55,21 +58,25 @@ public class PlayerLanguageStorePersister {
 			
 			try {
 				
-				OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(outputDataFile), Charsets.UTF_8);
+				OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(outputDataFile, false), Charsets.UTF_8);
 				BufferedWriter writer = new BufferedWriter(osw);
 				
 				try{
-					writer.write(gson.toJson(allPlayerLangs));
+					Type typeOfHashMap = new TypeToken<Map<String, String>>() { }.getType();
+					writer.write(gson.toJson(allPlayerLangs, typeOfHashMap));
 				} finally {
 					writer.close();
 				}
 				
 				return true;
 			} catch (FileNotFoundException e) {
-
+				logger.warning(e.toString());
 			} catch (IOException e) {
-
+				logger.warning(e.toString());
+			} catch (Exception e) {
+				logger.warning(e.toString());
 			}
+			
 		}
 		
 		return false;
@@ -93,9 +100,11 @@ public class PlayerLanguageStorePersister {
 				
 				return true;
 			} catch (FileNotFoundException e) {
-
+				logger.warning(e.toString());
 			} catch (IOException e) {
-
+				logger.warning(e.toString());
+			} catch (Exception e) {
+				logger.warning(e.toString());
 			}
 		}
 		

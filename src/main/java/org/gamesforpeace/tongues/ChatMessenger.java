@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public interface ChatMessenger {
 
-	public void sendMessage(String message, Player source, Player dest);
+	public void sendTranslatedMessageAsync(String message, Player source, Player dest);
 	
-	public void sendMessage(String message, Player source, Set<Player> dests);
+	public void sendMessageSync(String message, Player source, Set<Player> dests);
 }

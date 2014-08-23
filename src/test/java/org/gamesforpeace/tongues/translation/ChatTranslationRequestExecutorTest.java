@@ -56,7 +56,7 @@ public class ChatTranslationRequestExecutorTest {
 
 		// Assert
 		verify(builder.getTranslator()).translate(builder.getDefaultSourceMessage(), builder.getDefaultLang(), "other");
-		verify(builder.getMessenger()).sendMessage(builder.getDefaultTranslatedMessage(), builder.getSourcePlayer(), builder.getDestPlayers().get(0));
+		verify(builder.getMessenger()).sendTranslatedMessageAsync(builder.getDefaultTranslatedMessage(), builder.getSourcePlayer(), builder.getDestPlayers().get(0));
 	}
 
 	@Test
@@ -186,7 +186,7 @@ public class ChatTranslationRequestExecutorTest {
 				builder.getDestPlayersHash());
 
 		// Assert
-		verify(builder.getMessenger()).sendMessage(anyString(), eq(builder.getSourcePlayer()), eq(builder.getDestPlayers().get(0)));
+		verify(builder.getMessenger()).sendTranslatedMessageAsync(anyString(), eq(builder.getSourcePlayer()), eq(builder.getDestPlayers().get(0)));
 	}
 
 	public void testMultiDestPlayerMultiMessage() {
@@ -200,8 +200,8 @@ public class ChatTranslationRequestExecutorTest {
 				builder.getDestPlayersHash());
 
 		// Assert
-		verify(builder.getMessenger()).sendMessage(anyString(), builder.getSourcePlayer(), builder.getDestPlayers().get(0));
-		verify(builder.getMessenger()).sendMessage(anyString(), builder.getSourcePlayer(), builder.getDestPlayers().get(1));
+		verify(builder.getMessenger()).sendTranslatedMessageAsync(anyString(), builder.getSourcePlayer(), builder.getDestPlayers().get(0));
+		verify(builder.getMessenger()).sendTranslatedMessageAsync(anyString(), builder.getSourcePlayer(), builder.getDestPlayers().get(1));
 	}
 
 	@Test
@@ -218,7 +218,7 @@ public class ChatTranslationRequestExecutorTest {
 		// Assert
 		verify(builder.getTranslator()).translate(anyString(), anyString(),
 				anyString());
-		verify(builder.getMessenger()).sendMessage(
+		verify(builder.getMessenger()).sendTranslatedMessageAsync(
 				builder.getDefaultTranslatedMessage(),
 				builder.getSourcePlayer(), builder.getDestPlayers().get(0));
 	}

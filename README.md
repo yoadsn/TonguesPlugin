@@ -1,6 +1,6 @@
 #Tongues - Translation plugin for Bukkit MC server
 
-*Warning* - This Plugin is not ready for production use.
+*Warning* - This Plugin is might be ready for production use.
 
 Tongues implements real time translation support for messages between players.
 Currently Chat and Whisper messages are supported and only the Bing translation API as the translation service.
@@ -12,6 +12,9 @@ This is an alpha version, any issues or feature requests are welcome!
 - Provides a translated "WhisperWithinRadius" command
 - Uses the Bing Translation service (Requires an active account)
 - Allows each player to configure its own language
+- Allows pre-configuratino of player languages in a JSON data file
+- Redirects global chat to the **talk** command by default
+- Allows to "talk" to a specific player or all players (requires permissions)
 
 ##Installation
 - Drop the JAR in the plugins folder
@@ -43,6 +46,22 @@ permissions: Requires permission **tongues.whisper**
 
 aliases: whisper
 
+###tongues.talk###
+/talk [message] - Will whisper the message to any players around you
+
+permissions: Requires permission **tongues.talk** and **tongues.whisper**
+
+/talk [player] [message] - Will send the message only to the specified player
+
+permissions: Requires permission **tongues.talk**
+
+/talk * [message] - Will send the message to all players
+
+permissions: Requires permission **tongues.talk.all**
+
+aliases: talk, t
+
+
 ##Translation Logic
 When a message is sent, the language of the player receiving the message is used to translate the message.
 
@@ -53,7 +72,7 @@ Currently, regardless of the sending player's configured language, an auto-detec
 
 So for example, a "French" configured player might still send some "English" text and expect it to be translated correctly to a "Russian" configured player.
 
-#Language Configuration
+##Language Configuration
 Language settings per player are stored in the file **langStore.json** in the plugin's data folder.
 This file contains a single JSON object. The keys of this object are the player name and the values are the language.
 Configuration of the language is stored in the file when the plugin is disabled and read then the plugin is enabled.
@@ -61,7 +80,7 @@ It is possible to edit the configuration with a normal text editor but please no
 - The file must contain a single valid JSON object in the format described above.
 - A restart of the plugin is required to read configuration which was edited directly in the file.
 
-Example of a valid JSON object:
+Example of a valid language configuration JSON object:
 ```JSON
 {
   "playerName1": "arabic",
@@ -69,7 +88,11 @@ Example of a valid JSON object:
 }
 ```
 
-#Latest Changes
+##Latest Changes
+
+Since 0.9:
+- Added the **talk** command
+- Blocked global chat by default and redirected to it to the **talk** command
 
 Since 0.8:
 - All identification of a Player is done by it's user name instead of it's UUID.

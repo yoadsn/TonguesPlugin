@@ -25,17 +25,17 @@ public class PlayerLanguageStorePersisterTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void nullDataFolderNotAllowed() throws IOException {
-		new PlayerLanguageStorePersister(null, "a");
+		new PlayerLanguageStorePersister(null, "a", null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void emptyStorageFileNameNotAllowed() throws IOException {
-		new PlayerLanguageStorePersister(mock(File.class), "");
+		new PlayerLanguageStorePersister(mock(File.class), "", null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void nullStorageFileNameNotAllowed() throws IOException {
-		new PlayerLanguageStorePersister(mock(File.class), null);
+		new PlayerLanguageStorePersister(mock(File.class), null, null);
 	}
 	
 	@Test
@@ -44,7 +44,7 @@ public class PlayerLanguageStorePersisterTest {
 		
 		when(dataFolderMock.exists()).thenReturn(false);
 		
-		new PlayerLanguageStorePersister(dataFolderMock, "a");
+		new PlayerLanguageStorePersister(dataFolderMock, "a", null);
 		
 		verify(dataFolderMock).createNewFile();
 	}
@@ -55,7 +55,7 @@ public class PlayerLanguageStorePersisterTest {
 		
 		when(dataFolderMock.exists()).thenReturn(true);
 		
-		new PlayerLanguageStorePersister(dataFolderMock, "a");
+		new PlayerLanguageStorePersister(dataFolderMock, "a", null);
 		
 		verify(dataFolderMock, never()).createNewFile();
 	}
@@ -64,7 +64,7 @@ public class PlayerLanguageStorePersisterTest {
 	public void canPersistAndReadFromStore() throws IOException {
 		File dataFolderMock = testFolder.newFolder("someFolder");
 		
-		PlayerLanguageStorePersister sut = new PlayerLanguageStorePersister(dataFolderMock, "theoutputFile");
+		PlayerLanguageStorePersister sut = new PlayerLanguageStorePersister(dataFolderMock, "theoutputFile", null);
 		PlayerLanguageStore langStore = getPreFilledLanguageStore();
 		
 		sut.persist(langStore);

@@ -58,7 +58,7 @@ public class ChatTranslationRequestExecutor implements TranslationRequestExecuto
 			String translatedMessage = translationsOfMessages.get(destPlayerAndLang.getValue());
 
 			if (translatedMessage != null && !translatedMessage.equals(message))
-				messenger.sendMessage(translatedMessage, sourcePlayer, destPlayerAndLang.getKey());
+				messenger.sendTranslatedMessageAsync(translatedMessage, sourcePlayer, destPlayerAndLang.getKey());
 		}
 
 	}
