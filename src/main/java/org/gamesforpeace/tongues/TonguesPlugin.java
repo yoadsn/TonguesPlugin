@@ -2,6 +2,7 @@ package org.gamesforpeace.tongues;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -12,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.gamesforpeace.tongues.persistence.PlayerGroupsPersister;
 import org.gamesforpeace.tongues.persistence.PlayerLanguageStorePersister;
 import org.gamesforpeace.tongues.translation.BingTranslator;
 import org.gamesforpeace.tongues.translation.ChatTranslationRequestExecutor;
@@ -21,8 +23,10 @@ import org.gamesforpeace.tongues.translation.Translator;
 public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, TranslationRequestExecutor, CommandPoster, ChatDestinationResolver {
 	
 	private final String LANG_STORE_FILENAME = "langStore.json";
+	private final String GROUPS_STORE_FILENAME = "groupsStore.json";
 	private TranslationRequestExecutor translationRequestExecutor;
 	private PlayerLanguageStore langStore;
+	private HashMap<String, HashSet<String>> groupsStore;
 	
 	@Override
     public void onEnable(){
@@ -35,16 +39,9 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		
 		langStore = new ConcurrentPlayerLanguageStore(translator.getSupportedLanguages(),  translator.getDefaultLanguage());
 		
-		// Attempt to load any existing languages configuration of players from persistent store
-		PlayerLanguageStorePersister langStorePersister = null;
-		try {
-			langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), LANG_STORE_FILENAME, getLogger());
-			if (!langStorePersister.load(langStore)) {
-				getLogger().warning("Could not load player languages configuration file upon plugin enable.");
-			}
-		} catch (IOException e) {
-			getLogger().warning("Unable to access player languages persistence store for loading. Skipping.");
-		}
+		LoadPlayerLanguages();
+		
+		LoadGroups();
 		
 		translationRequestExecutor = new ChatTranslationRequestExecutor(translator, langStore, this);
 		
@@ -55,6 +52,31 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		getServer().getPluginCommand("tongues.whisper").setExecutor(new WhisperCommandExecutor(this));
 		getServer().getPluginCommand("tongues.talk").setExecutor(new TalkCommandExecutor(this, this, this, this));
     }
+
+	private void LoadPlayerLanguages() {
+		// Attempt to load any existing languages configuration of players from persistent store
+		try {
+			PlayerLanguageStorePersister langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), LANG_STORE_FILENAME, getLogger());
+			if (!langStorePersister.load(langStore)) {
+				getLogger().warning("Could not load player languages configuration file upon plugin enable.");
+			}
+		} catch (IOException e) {
+			getLogger().warning("Unable to access player languages persistence store for loading. Skipping.");
+		}
+	}
+
+	private void LoadGroups() {
+		try {
+			PlayerGroupsPersister groupsPersister = new PlayerGroupsPersister(getDataFolder(), GROUPS_STORE_FILENAME, getLogger());
+			groupsStore = groupsPersister.load();
+		} catch (IOException e) {
+			getLogger().warning("Unable to access player groups persistence store for loading. Skipping.");
+		}
+		
+		if (groupsStore == null) {
+			groupsStore = new HashMap<String, HashSet<String>>();
+		}
+	}
  
     @Override
     public void onDisable() {
