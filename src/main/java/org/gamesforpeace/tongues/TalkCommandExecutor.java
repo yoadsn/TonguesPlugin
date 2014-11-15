@@ -52,8 +52,15 @@ public class TalkCommandExecutor implements CommandExecutor {
 		Player destPlayer = destResolver.getOnlinePlayer(args[0]);
 
 		if (destPlayer == null) {
-			commandPoster.postCommand(sender, "whisper " + StringUtils.join(args, ' '));
-			return true;
+			
+			Set<Player> groupPlayers = destResolver.getGroupPlayers(args[0]);
+			
+			if (groupPlayers == null) {
+				commandPoster.postCommand(sender, "whisper " + StringUtils.join(args, ' '));
+				return true;
+			} else {
+				return tryTalkingToMultiplePlayers(sender, args, groupPlayers);
+			}
 		} else {
 			return tryTalkingToSpecificPlayer(sender, args, destPlayer);
 		}
@@ -61,6 +68,10 @@ public class TalkCommandExecutor implements CommandExecutor {
 
 	private boolean tryTalkingToSpecificPlayer(CommandSender sender, String[] args, Player destPlayer) {
 		return internalTryTalking(sender, args, new HashSet<Player>(Arrays.asList(destPlayer)));
+	}
+	
+	private boolean tryTalkingToMultiplePlayers(CommandSender sender, String[] args, Set<Player> destPlayers) {
+		return internalTryTalking(sender, args, destPlayers);
 	}
 
 	private boolean tryTalkingToAll(CommandSender sender, String[] args) {

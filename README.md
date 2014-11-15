@@ -1,8 +1,6 @@
 #Tongues - Translation plugin for Bukkit MC server
 
-*Warning* - This Plugin is might be ready for production use.
-
-Tongues implements real time translation support for messages between players.
+Tongues implements real time translation support for messages between players and extends the basic chat services.
 Currently Chat and Whisper messages are supported and only the Bing translation API as the translation service.
 
 This is an alpha version, any issues or feature requests are welcome!
@@ -15,13 +13,15 @@ This is an alpha version, any issues or feature requests are welcome!
 - Allows pre-configuratino of player languages in a JSON data file
 - Redirects global chat to the **talk** command by default
 - Allows to "talk" to a specific player or all players (requires permissions)
+- Allows definition of player groups, and sending chat messages to these groups
 
 ##Installation
 - Drop the JAR in the plugins folder
 - Reload plugins or start the server
 - Edit the plygin.yml created in the plugin's data folder to set the Bing translation API ClientID and SecretKey
+- Possibly create languages and groups configuration files
 - Reload again
-- Give permissions 
+- Give permissions
 
 ##Commands
 ###tongues.setlang###
@@ -52,6 +52,7 @@ aliases: whisper
 permissions: Requires permission **tongues.talk** and **tongues.whisper**
 
 /talk [player] [message] - Will send the message only to the specified player
+/talk [groupName] [message] - Will send the message only to the players in group 'groupName'.
 
 permissions: Requires permission **tongues.talk**
 
@@ -88,7 +89,32 @@ Example of a valid language configuration JSON object:
 }
 ```
 
+##Groups Configuration
+A Player can belong to a group (or more then one).
+To define the groups create a file called **groupsStore.json** in the plugin's data folder.
+The file contains a single JSON object. The keys of this object are the group name and the values are the group member players.
+Each value is a JSON Array with string values for each player in the group.
+
+- The file must contain a single valid JSON object in the format described above.
+- A restart of the plugin is required to read configuration which was edited directly in the file.
+
+Currently modifying group membership is supported by file editing and not with in-game commands.
+
+Example of a valid groups configuration JSON object:
+```JSON
+{
+	"blueGroup" : [
+		"playerName1",
+		"playerName2"
+	]
+}
+```
+
 ##Latest Changes
+
+Since 1.0:
+- Added player groups feature stored in a json file
+- Sending chat messages now supports also sending to groups
 
 Since 0.9:
 - Added the **talk** command

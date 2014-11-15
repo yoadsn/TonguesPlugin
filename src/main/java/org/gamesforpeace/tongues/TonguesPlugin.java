@@ -13,12 +13,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.gamesforpeace.tongues.persistence.PlayerGroupsPersister;
-import org.gamesforpeace.tongues.persistence.PlayerLanguageStorePersister;
-import org.gamesforpeace.tongues.translation.BingTranslator;
-import org.gamesforpeace.tongues.translation.ChatTranslationRequestExecutor;
-import org.gamesforpeace.tongues.translation.TranslationRequestExecutor;
-import org.gamesforpeace.tongues.translation.Translator;
+import org.gamesforpeace.tongues.persistence.*;
+import org.gamesforpeace.tongues.translation.*;
 
 public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, TranslationRequestExecutor, CommandPoster, ChatDestinationResolver {
 	
@@ -70,11 +66,11 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 			PlayerGroupsPersister groupsPersister = new PlayerGroupsPersister(getDataFolder(), GROUPS_STORE_FILENAME, getLogger());
 			groupsStore = groupsPersister.load();
 		} catch (IOException e) {
-			getLogger().warning("Unable to access player groups persistence store for loading. Skipping.");
 		}
 		
 		if (groupsStore == null) {
 			groupsStore = new HashMap<String, HashSet<String>>();
+			getLogger().warning("Unable to access player groups persistence store for loading. Skipping.");
 		}
 	}
  
@@ -143,5 +139,24 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 
 	public Set<Player> getAllOnlinePlayers() {
 		return new CopyOnWriteArraySet<Player>(Arrays.asList(getServer().getOnlinePlayers()));
+	}
+
+	public Set<Player> getGroupPlayers(String groupName) {
+		if (groupsStore.containsKey(groupName)) {
+
+			HashSet<String> groupPlayerNames = groupsStore.get(groupName); 
+			
+			Set<Player> groupPlayers = new HashSet<Player>(groupPlayerNames.size());
+			for (String name : groupPlayerNames) {
+				Player player = getOnlinePlayer(name);
+				if (player != null) {
+					groupPlayers.add(player);
+				}
+			}
+			
+			return groupPlayers;
+		}
+		
+		return null;
 	}
 }

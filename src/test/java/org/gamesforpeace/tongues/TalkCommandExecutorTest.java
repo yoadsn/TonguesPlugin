@@ -11,6 +11,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import java.awt.List;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,6 +45,8 @@ public class TalkCommandExecutorTest {
 		destResolver = mock(ChatDestinationResolver.class);
 		chatMsgr = mock(ChatMessenger.class);
 		transReqExec = mock(TranslationRequestExecutor.class);
+		
+		when(destResolver.getGroupPlayers(anyString())).thenReturn(null);
 		
 		SUT = new TalkCommandExecutor(cmdPosterMock, destResolver, chatMsgr, transReqExec);
 	}
@@ -231,6 +235,95 @@ public class TalkCommandExecutorTest {
 		verify(player).sendMessage(eq(TalkCommandExecutor.ERR_NO_PERMISSION));
 		verifyZeroInteractions(destResolver);
 		verifyZeroInteractions(cmdPosterMock);
+		verifyZeroInteractions(transReqExec);
+	}
+	
+	@Test
+	public void groupNameCommandModifierSendsToPlayerSingleWord() {
+		Player player = getExecutingPlayer();
+		Player destPlayer = getSingleDestinationPlayer();
+		Player destPlayer2 = getSingleDestinationPlayer();
+		
+		when(destResolver.getGroupPlayers("g1")).thenReturn(new HashSet<Player>(Arrays.asList(destPlayer, destPlayer2)));
+		
+		String[] cmdArgs = new String[] { "g1", "SomeText" };
+		assertTrue(SUT.onCommand(player, null, "", cmdArgs));
+		
+		verify(chatMsgr).sendMessageSync(eq("SomeText"), eq(player), destSetCaptor.capture());
+		Set<Player> destPlayersFromSend = destSetCaptor.getValue();
+		assertTrue(destPlayersFromSend.contains(destPlayer));
+		assertTrue(destPlayersFromSend.contains(destPlayer2));
+		assertEquals(2, destPlayersFromSend.size());
+		
+		verify(transReqExec).postTranslationRequest(eq("SomeText"), eq(player), destSetCaptor.capture());
+		Set<Player> destPlayersFromTranslate = destSetCaptor.getValue();
+		assertTrue(destPlayersFromTranslate.contains(destPlayer));
+		assertTrue(destPlayersFromTranslate.contains(destPlayer2));
+		assertEquals(2, destPlayersFromTranslate.size());
+	}
+	
+	@Test
+	public void groupNameCommandModifierSendsToPlayerSentence() {
+		Player player = getExecutingPlayer();
+		Player destPlayer = getSingleDestinationPlayer();
+		Player destPlayer2 = getSingleDestinationPlayer();
+		
+		when(destResolver.getGroupPlayers("g1")).thenReturn(new HashSet<Player>(Arrays.asList(destPlayer, destPlayer2)));
+		
+		String[] cmdArgs = new String[] { "g1", "SomeText", "SomeText2" };
+		assertTrue(SUT.onCommand(player, null, "", cmdArgs));
+		
+		verify(chatMsgr).sendMessageSync(eq("SomeText SomeText2"), eq(player), destSetCaptor.capture());
+		Set<Player> destPlayersFromSend = destSetCaptor.getValue();
+		assertTrue(destPlayersFromSend.contains(destPlayer));
+		assertTrue(destPlayersFromSend.contains(destPlayer2));
+		assertEquals(2, destPlayersFromSend.size());
+		
+		verify(transReqExec).postTranslationRequest(eq("SomeText SomeText2"), eq(player), destSetCaptor.capture());
+		Set<Player> destPlayersFromTranslate = destSetCaptor.getValue();
+		assertTrue(destPlayersFromTranslate.contains(destPlayer));
+		assertTrue(destPlayersFromTranslate.contains(destPlayer2));
+		assertEquals(2, destPlayersFromTranslate.size());
+	}
+	
+	@Test
+	public void groupNameCommandModifierWIthoutMessageIgnored() {
+		Player player = getExecutingPlayer();
+		Player destPlayer = getSingleDestinationPlayer();
+		Player destPlayer2 = getSingleDestinationPlayer();
+		
+		when(destResolver.getGroupPlayers("g1")).thenReturn(new HashSet<Player>(Arrays.asList(destPlayer, destPlayer2)));
+		
+		String[] cmdArgs = new String[] { "g1" };
+		assertFalse(SUT.onCommand(player, null, "", cmdArgs));
+		
+		verifyZeroInteractions(chatMsgr);
+		verifyZeroInteractions(transReqExec);
+	}
+	
+	@Test
+	public void groupNameCommandModifierWithoutPermmissionIsDenied() {
+		Player player = getExecutingPlayer();
+		when(player.hasPermission(TalkCommandExecutor.PERMISSION_TO_TALK)).thenReturn(false);
+		
+		String[] cmdArgs = new String[] { "g1", "SomeText" };
+		assertFalse(SUT.onCommand(player, null, "", cmdArgs));
+		
+		verify(player).sendMessage(eq(TalkCommandExecutor.ERR_NO_PERMISSION));
+		verifyZeroInteractions(destResolver);
+		verifyZeroInteractions(cmdPosterMock);
+		verifyZeroInteractions(transReqExec);
+	}
+	
+	@Test
+	public void nonExistingGroupModifierSendsWhisperSingleArg() {
+		Player player = getExecutingPlayer();
+		when(destResolver.getGroupPlayers("noGroup")).thenReturn(null);
+		
+		String[] cmdArgs = new String[] { "noGroup" };
+		assertTrue(SUT.onCommand(player, null, "", cmdArgs));
+		
+		verify(cmdPosterMock).postCommand(eq(player), eq("whisper noGroup"));
 		verifyZeroInteractions(transReqExec);
 	}
 }

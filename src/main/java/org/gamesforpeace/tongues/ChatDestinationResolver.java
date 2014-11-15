@@ -10,4 +10,5 @@ public interface ChatDestinationResolver {
 
 	Set<Player> getAllOnlinePlayers();
 
+	Set<Player> getGroupPlayers(String groupName);
 }

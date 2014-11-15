@@ -1,6 +1,6 @@
 name: Tongues
 main: org.gamesforpeace.tongues.TonguesPlugin
-version: 0.9.0
+version: 1.0.0
 description: Tongues implements real time translation support for messages between players. Currently Chat and Whisper messages are supported.
 
 commands:
@@ -28,6 +28,8 @@ commands:
       Will whisper the message to any players around you
       /<command> <player name> <message>
       Will send the message only to the specified player
+      /<command> <group name> <message>
+      Will send the message only to players within that specified group
       /<command> * <message>
       Will send the message to all players
 
@@ -44,7 +46,7 @@ permissions:
     description: Allows to whisper a message to other players nearby
     default: true
   tongues.talk:
-    description: Allows to whisper to players or talk to a specific player
+    description: Allows to talk to players in a group or talk to a specific player
     default: true
     children:
       tongues.whisper: true
