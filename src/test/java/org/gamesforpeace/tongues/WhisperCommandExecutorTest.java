@@ -23,6 +23,7 @@ import org.mockito.internal.util.collections.Sets;
 
 public class WhisperCommandExecutorTest {
 
+	ChatMessenger chatMsgr;
 	TranslationRequestExecutor transReqExec;
 	String[] cmdArgs;
 	String theSentMessage;
@@ -39,6 +40,7 @@ public class WhisperCommandExecutorTest {
 		senderDisplayName = "sender";
 		
 		// Create mocks
+		chatMsgr = mock(ChatMessenger.class);
 		transReqExec = mock(TranslationRequestExecutor.class);
 		sender = mock(Player.class);
 		entitiesInRange = new LinkedList<Entity>();
@@ -49,7 +51,7 @@ public class WhisperCommandExecutorTest {
 		when(sender.hasPermission("tongues.whisper")).thenReturn(true);
 		
 		// Create SUT
-		SUT = new WhisperCommandExecutor(transReqExec);
+		SUT = new WhisperCommandExecutor(chatMsgr, transReqExec);
 	}
 	
 	private Player addPlayerToRange() {
@@ -62,8 +64,13 @@ public class WhisperCommandExecutorTest {
 	
 
 	@Test(expected = IllegalArgumentException.class)
+	public void testChatMessengerNullTranslator() {
+		new WhisperCommandExecutor(null, transReqExec);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
 	public void testWhisperCommandExecutorNullTranslator() {
-		new WhisperCommandExecutor(null);
+		new WhisperCommandExecutor(chatMsgr, null);
 	}
 
 	@Test
@@ -80,7 +87,7 @@ public class WhisperCommandExecutorTest {
 	@Test
 	public void testNoPermissions() {
 		
-		SUT = new WhisperCommandExecutor(transReqExec, 1, 2, 3);
+		//SUT = new WhisperCommandExecutor(chatMsgr, transReqExec, 1, 2, 3);
 		when(sender.hasPermission("tongues.whisper")).thenReturn(false);
 		
 		assertFalse(SUT.onCommand(sender, null, "", cmdArgs));
@@ -91,7 +98,7 @@ public class WhisperCommandExecutorTest {
 	@Test
 	public void testCorrectRadiusUsed() {
 		
-		SUT = new WhisperCommandExecutor(transReqExec, 1, 2, 3);
+		SUT = new WhisperCommandExecutor(chatMsgr, transReqExec, 1, 2, 3);
 		
 		assertTrue(SUT.onCommand(sender, null, "", cmdArgs));
 		
@@ -117,7 +124,10 @@ public class WhisperCommandExecutorTest {
 		assertTrue(SUT.onCommand(sender, null, "", cmdArgs));
 		
 		verify(sender).sendMessage(String.format(SUT.MSG_YOU_WHISPERED_PREFIX_FMT, theSentMessage));
-		verify(playerAddedToRange).sendMessage(String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage));
+		verify(chatMsgr).sendMessageSync(
+				String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage),
+				sender,
+				Sets.newSet(playerAddedToRange));
 		verify(transReqExec).postTranslationRequest(theSentMessage, sender, Sets.newSet(playerAddedToRange));
 	}
 	
@@ -130,8 +140,10 @@ public class WhisperCommandExecutorTest {
 		assertTrue(SUT.onCommand(sender, null, "", cmdArgs));
 		
 		verify(sender).sendMessage(String.format(SUT.MSG_YOU_WHISPERED_PREFIX_FMT, theSentMessage));
-		verify(playerAddedToRange).sendMessage(String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage));
-		verify(playerAddedToRange2).sendMessage(String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage));
+		verify(chatMsgr).sendMessageSync(
+				String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage),
+				sender,
+				Sets.newSet(playerAddedToRange, playerAddedToRange2));
 		verify(transReqExec).postTranslationRequest(theSentMessage, sender, Sets.newSet(playerAddedToRange, playerAddedToRange2));
 	}
 	
@@ -145,7 +157,10 @@ public class WhisperCommandExecutorTest {
 		assertTrue(SUT.onCommand(sender, null, "", cmdArgs));
 		
 		verify(sender).sendMessage(String.format(SUT.MSG_YOU_WHISPERED_PREFIX_FMT, theSentMessage));
-		verify(playerAddedToRange).sendMessage(String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage));
+		verify(chatMsgr).sendMessageSync(
+				String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, senderDisplayName, theSentMessage),
+				sender,
+				Sets.newSet(playerAddedToRange));
 		verify(transReqExec).postTranslationRequest(theSentMessage, sender, Sets.newSet(playerAddedToRange));
 		verifyZeroInteractions(zombieAdded);
 	}

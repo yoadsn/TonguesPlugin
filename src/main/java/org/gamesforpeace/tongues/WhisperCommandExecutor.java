@@ -19,41 +19,47 @@ public class WhisperCommandExecutor implements CommandExecutor {
 	public static final String MSG_WHISPER_PREFIX_FMT = "%1s (whispered): %2s";
 	public static final String ERR_NO_PERMISSION = "You do not have permission to perform this operation";
 
+	ChatMessenger chatMsgr;
 	TranslationRequestExecutor translationRequestExecutor;
 	public String MSG_YOU_WHISPERED_PREFIX_FMT = "You whispered: %1s";
 	private double radiusOfX = DEFAULT_WHISPER_RADIUS;
 	private double radiusOfY = DEFAULT_WHISPER_RADIUS;
 	private double radiusOfZ = DEFAULT_WHISPER_RADIUS;
 
-	public WhisperCommandExecutor(TranslationRequestExecutor translationReqExecutor) {
+	public WhisperCommandExecutor(ChatMessenger chatMsgr, TranslationRequestExecutor translationReqExecutor) {
 		Validate.notNull(translationReqExecutor);
-
+		Validate.notNull(chatMsgr);
+		
 		this.translationRequestExecutor = translationReqExecutor;
+		this.chatMsgr = chatMsgr;
 	}
 
-	public WhisperCommandExecutor(TranslationRequestExecutor translationReqExecutor, double radiusOfX,
+	public WhisperCommandExecutor(ChatMessenger chatMsgr, TranslationRequestExecutor translationReqExecutor, double radiusOfX,
 			double radiusOfY, double radiusOfZ) {
 		Validate.notNull(translationReqExecutor);
+		Validate.notNull(chatMsgr);
 		this.radiusOfX = radiusOfX;
 		this.radiusOfY = radiusOfY;
 		this.radiusOfZ = radiusOfZ;
 
 		this.translationRequestExecutor = translationReqExecutor;
+		this.chatMsgr = chatMsgr;
 	}
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
 		Boolean success = false;
-		String message = "";
+		String responseMessage = "";
 
 		// This command can only be received from a player
 		if (!(sender instanceof Player)) {
-			message = ERR_NOT_A_PLAYER_WHISPER;
+			responseMessage = ERR_NOT_A_PLAYER_WHISPER;
 		} else {
+			Player playerSender = (Player)sender; 
 			if (!sender.hasPermission("tongues.whisper")) {
-				message = ERR_NO_PERMISSION;
+				responseMessage = ERR_NO_PERMISSION;
 			} else if (args.length == 0) {
-				message = ERR_EMPTY_MESSAGE;
+				responseMessage = ERR_EMPTY_MESSAGE;
 			} else {
 				// Guesstimate the size of the final message
 				StringBuilder sb = new StringBuilder(args.length * 4);
@@ -65,23 +71,21 @@ public class WhisperCommandExecutor implements CommandExecutor {
 				String finalMessage = sb.toString().trim();
 
 				if (finalMessage.isEmpty()) {
-					message = ERR_EMPTY_MESSAGE;
+					responseMessage = ERR_EMPTY_MESSAGE;
 				} else {
-					Set<Player> playersInRange = getAnyPlayersInRange((Player) sender);
+					Set<Player> playersInRange = getAnyPlayersInRange(playerSender);
 					if (playersInRange.size() == 0) {
-						message = MSG_NOBODY_TO_WHISPER_TO;
+						responseMessage = MSG_NOBODY_TO_WHISPER_TO;
 					} else {
 						// Send the whispers
-						for (Player dest : playersInRange) {
-							dest.sendMessage(String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT,
-									((Player) sender).getDisplayName(), finalMessage));
-						}
+						chatMsgr.sendMessageSync(generateWhisperMessage(playerSender, finalMessage), playerSender, playersInRange);
+						
 						// Post translation requests for the whispers.
 						translationRequestExecutor
-								.postTranslationRequest(finalMessage, (Player) sender, playersInRange);
+								.postTranslationRequest(finalMessage, playerSender, playersInRange);
 
 						// Prepare the confirmation message for the sender
-						message = String.format(MSG_YOU_WHISPERED_PREFIX_FMT, finalMessage);
+						responseMessage = String.format(MSG_YOU_WHISPERED_PREFIX_FMT, finalMessage);
 					}
 
 					success = true;
@@ -89,9 +93,13 @@ public class WhisperCommandExecutor implements CommandExecutor {
 			}
 		}
 
-		sender.sendMessage(message);
+		sender.sendMessage(responseMessage);
 		return success;
 
+	}
+
+	private String generateWhisperMessage(Player playerSender, String finalMessage) {
+		return String.format(WhisperCommandExecutor.MSG_WHISPER_PREFIX_FMT, playerSender.getDisplayName(), finalMessage);
 	}
 
 	private Set<Player> getAnyPlayersInRange(Player sender) {

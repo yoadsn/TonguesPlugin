@@ -45,7 +45,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		
 		getServer().getPluginManager().registerEvents(new ChatListener(this, this), this);
 		getServer().getPluginCommand("tongues.setlang").setExecutor(new SetLangCommandExecutor(langStore, getServer()));
-		getServer().getPluginCommand("tongues.whisper").setExecutor(new WhisperCommandExecutor(this));
+		getServer().getPluginCommand("tongues.whisper").setExecutor(new WhisperCommandExecutor(this, this));
 		getServer().getPluginCommand("tongues.talk").setExecutor(new TalkCommandExecutor(this, this, this, this));
     }
 
