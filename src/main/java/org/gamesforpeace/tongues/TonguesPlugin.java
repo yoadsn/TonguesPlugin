@@ -2,13 +2,15 @@ package org.gamesforpeace.tongues;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +23,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 	private final String LANG_STORE_FILENAME = "langStore.json";
 	private final String GROUPS_STORE_FILENAME = "groupsStore.json";
 	private TranslationRequestExecutor translationRequestExecutor;
+	private ListenCommandExecutor listenCommandExecutor;
 	private PlayerLanguageStore langStore;
 	private HashMap<String, HashSet<String>> groupsStore;
 	
@@ -40,6 +43,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		LoadGroups();
 		
 		translationRequestExecutor = new ChatTranslationRequestExecutor(translator, langStore, this);
+		listenCommandExecutor = new ListenCommandExecutor();
 		
 		//getLogger().info("Supported languages: " + translator.getSupportedLanguages().toString());
 		
@@ -47,6 +51,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		getServer().getPluginCommand("tongues.setlang").setExecutor(new SetLangCommandExecutor(langStore, getServer()));
 		getServer().getPluginCommand("tongues.whisper").setExecutor(new WhisperCommandExecutor(this, this));
 		getServer().getPluginCommand("tongues.talk").setExecutor(new TalkCommandExecutor(this, this, this, this));
+		getServer().getPluginCommand("tongues.listen").setExecutor(listenCommandExecutor);
     }
 
 	private void LoadPlayerLanguages() {
@@ -109,6 +114,27 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		for (Player destPlayer : dests) {
 			destPlayer.sendMessage(String.format("<%1s> %2s", source.getDisplayName(), message));
 		}
+		
+		for (Player glistenPlayer : GetOnlineGloballyListeningPlayers()) {
+			if (glistenPlayer.getDisplayName() != source.getDisplayName()) {
+				glistenPlayer.sendMessage(ChatColor.GOLD + String.format("<G> <%1s> %2s", source.getDisplayName(), message));
+			}
+		}
+	}
+	
+	private Set<Player> GetOnlineGloballyListeningPlayers() {
+		Set<String> listeningPlayerNames = listenCommandExecutor.getEnabledListeningPlayers();
+		Set<Player> listeningOnlinePlayers = new HashSet<Player>();
+		for (String name : listeningPlayerNames) {
+			Player player = this.getServer().getPlayer(name);
+			if (player == null) {
+				listenCommandExecutor.removeListeningPlayer(name);
+			} else {
+				listeningOnlinePlayers.add(player);
+			}
+		}
+		
+		return listeningOnlinePlayers;
 	}
 
 	/**
@@ -118,11 +144,15 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		final String theMessage = message;
 		final Player theSender = sourcePlayer;
 		final Set<Player> destinations = destinationPlayers;
+		final Set<Player> globallyListening = GetOnlineGloballyListeningPlayers();
+		globallyListening.remove(sourcePlayer);
+		
+		globallyListening.addAll(destinations);
 		
 		new BukkitRunnable() {
 			 
             public void run() {
-            	translationRequestExecutor.postTranslationRequest(theMessage, theSender, destinations);
+            	translationRequestExecutor.postTranslationRequest(theMessage, theSender, globallyListening);
             }
  
         }.runTaskAsynchronously(this);

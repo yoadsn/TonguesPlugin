@@ -32,6 +32,15 @@ commands:
       Will send the message only to players within that specified group
       /<command> * <message>
       Will send the message to all players
+  tongues.listen:
+    description: Toggles listening to all chat communications on the server on/off
+    permission: tongues.listen
+    aliases: [listen, tl]
+    usage: |
+      /<command> on
+      Enables global chat listen (including whispers and translations)
+      /<command> off
+      Enables global chat listen (including whispers and translations)
 
 permissions:
   tongues.setlang:
@@ -55,4 +64,6 @@ permissions:
     default: op
     children:
       tongues.talk: true
-     
+  tongues.listen:
+    description: Allows listening to any chat on the server
+    default: op

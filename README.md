@@ -14,6 +14,7 @@ This is an alpha version, any issues or feature requests are welcome!
 - Redirects global chat to the **talk** command by default
 - Allows to "talk" to a specific player or all players (requires permissions)
 - Allows definition of player groups, and sending chat messages to these groups
+- Alloes listening to all chats taking place on the server
 
 ##Installation
 - Drop the JAR in the plugins folder
@@ -61,6 +62,11 @@ permissions: Requires permission **tongues.talk**
 permissions: Requires permission **tongues.talk.all**
 
 aliases: talk, t
+
+###tongues.listen###
+/tl [on/off] - Enables or disables the global chat listening.
+
+permissions: Requires permission **tongues.listen**
 
 
 ##Translation Logic
@@ -111,6 +117,9 @@ Example of a valid groups configuration JSON object:
 ```
 
 ##Latest Changes
+
+Since 1.1:
+- Added the **listen** to allow listening to all chats on the server.
 
 Since 1.0:
 - Added player groups feature stored in a json file
