@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.gamesforpeace.tongues.translation.TranslationRequestExecutor;
 
 public class WhisperCommandExecutor implements CommandExecutor {
-	public static final double DEFAULT_WHISPER_RADIUS = 10;
+	public static final int DEFAULT_WHISPER_RADIUS = 10;
 	public static final String MSG_NOBODY_TO_WHISPER_TO = "There is no player to whisper to around you";
 	public static final String ERR_EMPTY_MESSAGE = "You must provide a message to whisper";
 	public static final String ERR_NOT_A_PLAYER_WHISPER = "The whisper command must come from a player";
@@ -27,11 +27,17 @@ public class WhisperCommandExecutor implements CommandExecutor {
 	private double radiusOfZ = DEFAULT_WHISPER_RADIUS;
 
 	public WhisperCommandExecutor(ChatMessenger chatMsgr, TranslationRequestExecutor translationReqExecutor) {
+		this(chatMsgr, translationReqExecutor, DEFAULT_WHISPER_RADIUS);
+	}
+	
+	public WhisperCommandExecutor(ChatMessenger chatMsgr, TranslationRequestExecutor translationReqExecutor, int radiusToUse) {
 		Validate.notNull(translationReqExecutor);
 		Validate.notNull(chatMsgr);
+		Validate.isTrue(radiusToUse > 0);
 		
 		this.translationRequestExecutor = translationReqExecutor;
 		this.chatMsgr = chatMsgr;
+		this.radiusOfX = this.radiusOfY = this.radiusOfZ = radiusToUse;
 	}
 
 	public WhisperCommandExecutor(ChatMessenger chatMsgr, TranslationRequestExecutor translationReqExecutor, double radiusOfX,

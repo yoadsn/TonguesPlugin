@@ -31,6 +31,7 @@ public class WhisperCommandExecutorTest {
 	String senderDisplayName;
 	List<Entity> entitiesInRange; 
 	WhisperCommandExecutor SUT;
+	int radiusToWhisper;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -38,6 +39,7 @@ public class WhisperCommandExecutorTest {
 		cmdArgs = new String[] {"my", "message"};
 		theSentMessage  = "my message";
 		senderDisplayName = "sender";
+		radiusToWhisper = 10;
 		
 		// Create mocks
 		chatMsgr = mock(ChatMessenger.class);
@@ -51,7 +53,7 @@ public class WhisperCommandExecutorTest {
 		when(sender.hasPermission("tongues.whisper")).thenReturn(true);
 		
 		// Create SUT
-		SUT = new WhisperCommandExecutor(chatMsgr, transReqExec);
+		SUT = new WhisperCommandExecutor(chatMsgr, transReqExec, radiusToWhisper);
 	}
 	
 	private Player addPlayerToRange() {
@@ -65,12 +67,22 @@ public class WhisperCommandExecutorTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testChatMessengerNullTranslator() {
-		new WhisperCommandExecutor(null, transReqExec);
+		new WhisperCommandExecutor(null, transReqExec, radiusToWhisper);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testWhisperCommandExecutorNullTranslator() {
-		new WhisperCommandExecutor(chatMsgr, null);
+		new WhisperCommandExecutor(chatMsgr, null, radiusToWhisper);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void radiusCannotBeZero() {
+		new WhisperCommandExecutor(chatMsgr, transReqExec, 0);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void radiusCannotBeNegative() {
+		new WhisperCommandExecutor(chatMsgr, transReqExec, -1);
 	}
 
 	@Test
@@ -186,6 +198,24 @@ public class WhisperCommandExecutorTest {
 		
 		verify(sender).sendMessage(WhisperCommandExecutor.ERR_EMPTY_MESSAGE);
 		verifyZeroInteractions(transReqExec);
+	}
+	
+	@Test
+	public void usesCorrectRadiusSettings() {
+		
+		SUT.onCommand(sender, null, "", cmdArgs);
+		
+		verify(sender).getNearbyEntities(radiusToWhisper, radiusToWhisper, radiusToWhisper);
+	}
+	
+	@Test
+	public void usesDefaultRadiusSettings() {
+		
+		WhisperCommandExecutor SUT = new WhisperCommandExecutor(chatMsgr, transReqExec);
+		
+		SUT.onCommand(sender, null, "", cmdArgs);
+		
+		verify(sender).getNearbyEntities(radiusToWhisper, radiusToWhisper, radiusToWhisper);
 	}
 	
 }

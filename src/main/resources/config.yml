@@ -8,3 +8,5 @@ chatLogging:
     enabled: false
     token: replace_with_your_logentries_log_token
     debug: false
+whisper:
+  radius: 10

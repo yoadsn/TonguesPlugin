@@ -68,6 +68,9 @@ aliases: talk, t
 
 permissions: Requires permission **tongues.listen**
 
+##Whisper Radius Configuration
+The plugin allows configuration of the radius to consider for whispering to players (same in all directions x/y/z) with the config.yml key:
+* *whisper.radius* (int) - Sets the whispering radius - default is 10
 
 ##Translation Logic
 When a message is sent, the language of the player receiving the message is used to translate the message.
@@ -128,7 +131,7 @@ The server logs the following information for each chat message:
 - Sender player display name
 - Receiver player name
 - Receiver player display name
-- Message as it was displayed to the client (with names, languages, and every othe formatting applied)
+- Message as it was displayed to the client (with names, languages, and every other formatting applied)
 
 Local log files are stored under the plugin data folder in the path: `logs/chat/<month>/<day>/chat.<TIMESTAMP>.log`
 
@@ -145,6 +148,7 @@ The config.yml file can configure the following for chat logging:
 
 Since 1.2:
 - Added chat logging support using a file logger and/or logentries logger.
+- Added a configuration key for the whispering radius
 
 Since 1.1:
 - Added the **listen** to allow listening to all chats on the server.

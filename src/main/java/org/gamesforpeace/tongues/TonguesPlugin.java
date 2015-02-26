@@ -58,10 +58,22 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		
 		getServer().getPluginManager().registerEvents(new ChatListener(this, this), this);
 		getServer().getPluginCommand("tongues.setlang").setExecutor(new SetLangCommandExecutor(langStore, getServer()));
-		getServer().getPluginCommand("tongues.whisper").setExecutor(new WhisperCommandExecutor(this, this));
+		getServer().getPluginCommand("tongues.whisper").setExecutor(createWhisperCommandExecutor());
 		getServer().getPluginCommand("tongues.talk").setExecutor(new TalkCommandExecutor(this, this, this, this));
 		getServer().getPluginCommand("tongues.listen").setExecutor(listenCommandExecutor);
     }
+
+	private WhisperCommandExecutor createWhisperCommandExecutor() {
+		WhisperCommandExecutor whisperCmdExec;
+		if (getConfig().isSet("whisper.radius")) {
+			whisperCmdExec = new WhisperCommandExecutor(this, this, getConfig().getInt("whisper.radius"));
+			//getLogger().info("Whisper radius was configured to be " + getConfig().getString("whisper.radius").toString());
+		} else {
+			whisperCmdExec = new WhisperCommandExecutor(this, this);
+			//getLogger().info("Whisper radius was configured to be the default");
+		}
+		return whisperCmdExec;
+	}
 
 	private void setupChatLoggers() {
 		Set<BaseLogger> allLoggers = new HashSet<BaseLogger>();
