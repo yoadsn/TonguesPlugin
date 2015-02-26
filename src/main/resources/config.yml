@@ -1,3 +1,10 @@
 bingTranslation:
   clientID: replace_with_your_client_id
   secretKey: replace_with_your_secret_key
+chatLogging:
+  file:
+    enabled: true
+  logentries:
+    enabled: false
+    token: replace_with_your_logentries_log_token
+    debug: false

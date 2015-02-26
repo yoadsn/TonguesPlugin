@@ -1,9 +1,8 @@
 #Tongues - Translation plugin for Bukkit MC server
 
-Tongues implements real time translation support for messages between players and extends the basic chat services.
-Currently Chat and Whisper messages are supported and only the Bing translation API as the translation service.
+Tongues implements real time translation support for messages between players and extends the basic chat services to include other useful features. Currently only the Bing translation API as the translation service.
 
-This is an alpha version, any issues or feature requests are welcome!
+This is quite a stable version, any issues or feature requests are welcome!
 
 ##Main features
 - Translates on the fly chat messages
@@ -15,6 +14,7 @@ This is an alpha version, any issues or feature requests are welcome!
 - Allows to "talk" to a specific player or all players (requires permissions)
 - Allows definition of player groups, and sending chat messages to these groups
 - Alloes listening to all chats taking place on the server
+- Logs chat messages to files and/or [LogEntries](logentries.com)
 
 ##Installation
 - Drop the JAR in the plugins folder
@@ -116,7 +116,35 @@ Example of a valid groups configuration JSON object:
 }
 ```
 
+##Chat Logging
+The plugin logs chat messages, their sender, receiver, and the message that was sent as it was formatted.
+When a message is sent to multiple receivers (such as a public message, or a whisper with more than one player around) it will log one row for each delivered message.
+When logging to files, chat logs are appended to a log file per server startup, organized in a month/day folder structure.
+When logging to [LogEntries](logentries.com), it appends all messages using the token-based input with the configured token.
+
+The server logs the following information for each chat message:
+- Message send time - UTC
+- Sender player name
+- Sender player display name
+- Receiver player name
+- Receiver player display name
+- Message as it was displayed to the client (with names, languages, and every othe formatting applied)
+
+Local log files are stored under the plugin data folder in the path: `logs/chat/<month>/<day>/chat.<TIMESTAMP>.log`
+
+The config.yml file can configure the following for chat logging:
+* *chatLogging.file.enabled* (true/false) - Sets if logging to files is enabled - default is true
+* *chatLogging.logentries.enabled* (true/false) - Sets if logging to logentries is enabled - default is false
+* *chatLogging.logentries.token* (string) - The token to use for logentries logging
+* *chatLogging.logentries.debug* (true/false) - Enable or disable logentries debug messages to minecraft console - default false
+
+
+**Note:** The logger will not log whisper commands which arrived at no one.
+
 ##Latest Changes
+
+Since 1.2:
+- Added chat logging support using a file logger and/or logentries logger.
 
 Since 1.1:
 - Added the **listen** to allow listening to all chats on the server.

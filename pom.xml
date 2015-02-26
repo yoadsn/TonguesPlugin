@@ -4,7 +4,7 @@
 
 	<groupId>org.gamesforpeace</groupId>
 	<artifactId>TonguesPlugin</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 
 	<name>TonguesPlugin</name>
@@ -14,7 +14,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	
 	<dependencies>
+		<dependency>
+	        <groupId>com.logentries</groupId>
+	        <artifactId>logentries-appender</artifactId>
+	        <version>RELEASE</version>
+    	</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit-dep</artifactId>
@@ -67,6 +73,7 @@
 						<includes>
 							<include>com.memetix:microsoft-translator-java-api</include>
 							<include>com.google.code.gson:gson</include>
+							<include>com.logentries:logentries-appender</include>
 						</includes>
 					</artifactSet>
 				</configuration>
@@ -85,6 +92,10 @@
 								<relocation>
 									<pattern>com.google.code.gson</pattern>
 									<shadedPattern>org.gamesforpeace.gson</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>com.logentries</pattern>
+									<shadedPattern>org.gamesforpeace.logentries</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>

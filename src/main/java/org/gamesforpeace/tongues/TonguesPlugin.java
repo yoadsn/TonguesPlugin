@@ -2,7 +2,6 @@ package org.gamesforpeace.tongues;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,13 +9,20 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.gamesforpeace.tongues.persistence.*;
-import org.gamesforpeace.tongues.translation.*;
+import org.gamesforpeace.tongues.logging.BaseLogger;
+import org.gamesforpeace.tongues.logging.FileLogger;
+import org.gamesforpeace.tongues.logging.LogentriesLogger;
+import org.gamesforpeace.tongues.logging.TimeBasedLogFilenameProducer;
+import org.gamesforpeace.tongues.persistence.PlayerGroupsPersister;
+import org.gamesforpeace.tongues.persistence.PlayerLanguageStorePersister;
+import org.gamesforpeace.tongues.translation.BingTranslator;
+import org.gamesforpeace.tongues.translation.ChatTranslationRequestExecutor;
+import org.gamesforpeace.tongues.translation.TranslationRequestExecutor;
+import org.gamesforpeace.tongues.translation.Translator;
 
 public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, TranslationRequestExecutor, CommandPoster, ChatDestinationResolver {
 	
@@ -25,6 +31,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 	private TranslationRequestExecutor translationRequestExecutor;
 	private ListenCommandExecutor listenCommandExecutor;
 	private PlayerLanguageStore langStore;
+	private ChatLogger chatLogger = null;
 	private HashMap<String, HashSet<String>> groupsStore;
 	
 	@Override
@@ -42,6 +49,8 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		
 		LoadGroups();
 		
+		setupChatLoggers();
+		
 		translationRequestExecutor = new ChatTranslationRequestExecutor(translator, langStore, this);
 		listenCommandExecutor = new ListenCommandExecutor();
 		
@@ -53,6 +62,28 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		getServer().getPluginCommand("tongues.talk").setExecutor(new TalkCommandExecutor(this, this, this, this));
 		getServer().getPluginCommand("tongues.listen").setExecutor(listenCommandExecutor);
     }
+
+	private void setupChatLoggers() {
+		Set<BaseLogger> allLoggers = new HashSet<BaseLogger>();
+		
+		Boolean useFileChatLogging = getConfig().getBoolean("chatLogging.file.enabled");
+		Boolean useLogentriesChatLogging = getConfig().getBoolean("chatLogging.logentries.enabled");
+		
+		if (useFileChatLogging) {
+			String fileNamePattern = new TimeBasedLogFilenameProducer().getLogFilename(getDataFolder().getAbsolutePath(), "chat", "chat");
+			FileLogger fLogger = new FileLogger(fileNamePattern, getLogger());
+			allLoggers.add(fLogger);
+		}
+		
+		if (useLogentriesChatLogging) {
+			LogentriesLogger leLogger = new LogentriesLogger(
+					getConfig().getString("chatLogging.logentries.token"),
+					getConfig().getBoolean("chatLogging.logentries.debug"));
+			allLoggers.add(leLogger);
+		}
+		
+		chatLogger = new ChatLogger(allLoggers, "%1$s|%2$s|%3$s|%4$s|%5$s");
+	}
 
 	private void LoadPlayerLanguages() {
 		// Attempt to load any existing languages configuration of players from persistent store
@@ -104,15 +135,19 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		new BukkitRunnable() {
 			
 			public void run() {
+				String chatMessage = String.format("<%1s (%2s)> %3s", sendFrom.getDisplayName(), destinationLanguage,  sendMessage);
+				sendTo.sendMessage(chatMessage);
 				
-				sendTo.sendMessage(String.format("%1s (%2s): %3s", sendFrom.getDisplayName(), destinationLanguage,  sendMessage));
+				chatLogger.log(sendFrom, sendTo, chatMessage);
 			}
 		}.runTask(this);
 	}
 
 	public void sendMessageSync(String message, Player source, Set<Player> dests) {
 		for (Player destPlayer : dests) {
-			destPlayer.sendMessage(String.format("<%1s> %2s", source.getDisplayName(), message));
+			String chatMessage = String.format("<%1s> %2s", source.getDisplayName(), message);
+			destPlayer.sendMessage(chatMessage);
+			chatLogger.log(source, destPlayer, chatMessage);
 		}
 		
 		for (Player glistenPlayer : GetOnlineGloballyListeningPlayers()) {
