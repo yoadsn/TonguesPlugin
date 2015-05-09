@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.Validate;
@@ -54,7 +55,7 @@ public class PlayerLanguageStorePersister {
 	public boolean persist(PlayerLanguageStore langStore) {
 		File outputDataFile = getDataFile();
 		if (outputDataFile != null) {
-			Map<String, String> allPlayerLangs = langStore.getAllPlayerLanguages();
+			Map<UUID, String> allPlayerLangs = langStore.getAllPlayerLanguages();
 			
 			try {
 				
@@ -62,7 +63,7 @@ public class PlayerLanguageStorePersister {
 				BufferedWriter writer = new BufferedWriter(osw);
 				
 				try{
-					Type typeOfHashMap = new TypeToken<Map<String, String>>() { }.getType();
+					Type typeOfHashMap = new TypeToken<Map<UUID, String>>() { }.getType();
 					writer.write(gson.toJson(allPlayerLangs, typeOfHashMap));
 				} finally {
 					writer.close();
@@ -91,8 +92,8 @@ public class PlayerLanguageStorePersister {
 				InputStreamReader isr = new InputStreamReader( new FileInputStream(inputDataFile), Charsets.UTF_8);
 				JsonReader reader = new JsonReader(isr);
 				
-				Type typeOfHashMap = new TypeToken<Map<String, String>>() { }.getType();
-				Map<String, String> allPlayerLangs = gson.fromJson(reader, typeOfHashMap);
+				Type typeOfHashMap = new TypeToken<Map<UUID, String>>() { }.getType();
+				Map<UUID, String> allPlayerLangs = gson.fromJson(reader, typeOfHashMap);
 
 				langStore.setPlayerLanguages(allPlayerLangs);
 				

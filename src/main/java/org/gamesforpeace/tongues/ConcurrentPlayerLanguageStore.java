@@ -11,32 +11,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConcurrentPlayerLanguageStore implements PlayerLanguageStore {
 
 	private final HashSet<String> supportedLanguages; 
-	private final ConcurrentHashMap<String, String> languageStore;
+	private final ConcurrentHashMap<UUID, String> languageStore;
 	private final String defaultLanguage;
 	
 	public ConcurrentPlayerLanguageStore(Set<String> supportedLnaguages, String defaultLanguage) {
 		this.supportedLanguages = new HashSet<String>(supportedLnaguages);
-		languageStore = new ConcurrentHashMap<String, String>();
+		languageStore = new ConcurrentHashMap<UUID, String>();
 		this.defaultLanguage = defaultLanguage;
 	}
 	
-	public String getLanguageForPlayer(String playerName) {
+	public String getLanguageForPlayer(UUID playerId) {
 		
-		String playerStoredLang = languageStore.get(playerName);
+		String playerStoredLang = languageStore.get(playerId);
 		if (playerStoredLang == null) {
 			playerStoredLang = defaultLanguage;
-			languageStore.put(playerName, defaultLanguage);
+			languageStore.put(playerId, defaultLanguage);
 		}
 
 		return playerStoredLang;
 	}
 
-	public void setLanguageForPlayer(String playerName, String language) {
-		languageStore.put(playerName, language);
+	public void setLanguageForPlayer(UUID playerId, String language) {
+		languageStore.put(playerId, language);
 	}
 	
-	public void clearLanguageForPlayer(String playerName) {
-		languageStore.remove(playerName);
+	public void clearLanguageForPlayer(UUID playerId) {
+		languageStore.remove(playerId);
 	}
 
 	public Boolean isLanguageSupported(String language) {
@@ -47,12 +47,12 @@ public class ConcurrentPlayerLanguageStore implements PlayerLanguageStore {
 		return defaultLanguage;
 	}
 
-	public Map<String, String> getAllPlayerLanguages() {
+	public Map<UUID, String> getAllPlayerLanguages() {
 		return Collections.unmodifiableMap(languageStore);
 	}
 
-	public void setPlayerLanguages(Map<String, String> playerLanguagesToSet) {
-		for (Entry<String, String> languagePlayerSetting : playerLanguagesToSet.entrySet()) {
+	public void setPlayerLanguages(Map<UUID, String> playerLanguagesToSet) {
+		for (Entry<UUID, String> languagePlayerSetting : playerLanguagesToSet.entrySet()) {
 			setLanguageForPlayer(languagePlayerSetting.getKey(), languagePlayerSetting.getValue());
 		}
 	}

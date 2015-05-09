@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.UUID;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,10 +25,10 @@ public class PlayerGroupsPersisterTest {
 		
 		PlayerGroupsPersister sut = new PlayerGroupsPersister(dataFolderMock, "theoutputFile", null);
 
-		HashMap<String, HashSet<String>> storeToWrite = getSingleGroupStore();
+		HashMap<String, HashSet<UUID>> storeToWrite = getSingleGroupStore();
 		sut.persist(storeToWrite);
 
-		HashMap<String, HashSet<String>> readStore = sut.load();
+		HashMap<String, HashSet<UUID>> readStore = sut.load();
 		
 		assertStoreContentsEqual(storeToWrite, readStore);
 	}
@@ -38,10 +39,10 @@ public class PlayerGroupsPersisterTest {
 		
 		PlayerGroupsPersister sut = new PlayerGroupsPersister(dataFolderMock, "theoutputFile", null);
 
-		HashMap<String, HashSet<String>> storeToWrite = getMultiGroupStore();
+		HashMap<String, HashSet<UUID>> storeToWrite = getMultiGroupStore();
 		sut.persist(storeToWrite);
 
-		HashMap<String, HashSet<String>> readStore = sut.load();
+		HashMap<String, HashSet<UUID>> readStore = sut.load();
 		
 		assertStoreContentsEqual(storeToWrite, readStore);
 	}
@@ -51,46 +52,46 @@ public class PlayerGroupsPersisterTest {
 		
 		PlayerGroupsPersister sut = new PlayerGroupsPersister(dataFolderMock, "theoutputFile", null);
 
-		HashMap<String, HashSet<String>> storeToWrite = getEmptyGroupStore();
+		HashMap<String, HashSet<UUID>> storeToWrite = getEmptyGroupStore();
 		sut.persist(storeToWrite);
 
-		HashMap<String, HashSet<String>> readStore = sut.load();
+		HashMap<String, HashSet<UUID>> readStore = sut.load();
 		
 		assertStoreContentsEqual(storeToWrite, readStore);
 	}
 	
-	private HashMap<String, HashSet<String>> getSingleGroupStore() {
-		HashMap<String, HashSet<String>> store = new  HashMap<String, HashSet<String>>();
-		store.put("g1", new HashSet<String>(Arrays.asList("p1", "p2")));
+	private HashMap<String, HashSet<UUID>> getSingleGroupStore() {
+		HashMap<String, HashSet<UUID>> store = new  HashMap<String, HashSet<UUID>>();
+		store.put("g1", new HashSet<UUID>(Arrays.asList(UUID.randomUUID(), UUID.randomUUID())));
 		return store;
 	}
 	
-	private HashMap<String, HashSet<String>> getMultiGroupStore() {
-		HashMap<String, HashSet<String>> store = new  HashMap<String, HashSet<String>>();
-		store.put("g1", new HashSet<String>(Arrays.asList("p1", "p2")));
-		store.put("g2", new HashSet<String>(Arrays.asList("p3", "p4")));
+	private HashMap<String, HashSet<UUID>> getMultiGroupStore() {
+		HashMap<String, HashSet<UUID>> store = new  HashMap<String, HashSet<UUID>>();
+		store.put("g1", new HashSet<UUID>(Arrays.asList(UUID.randomUUID(), UUID.randomUUID())));
+		store.put("g2", new HashSet<UUID>(Arrays.asList(UUID.randomUUID(), UUID.randomUUID())));
 		return store;
 	}
 	
-	private HashMap<String, HashSet<String>> getEmptyGroupStore() {
-		HashMap<String, HashSet<String>> store = new  HashMap<String, HashSet<String>>();
+	private HashMap<String, HashSet<UUID>> getEmptyGroupStore() {
+		HashMap<String, HashSet<UUID>> store = new  HashMap<String, HashSet<UUID>>();
 		return store;
 	}
 	
 	private void assertStoreContentsEqual(
-			HashMap<String, HashSet<String>> expected,
-			HashMap<String, HashSet<String>> actual) {
+			HashMap<String, HashSet<UUID>> expected,
+			HashMap<String, HashSet<UUID>> actual) {
 		
 		if (expected.size() != actual.size()) fail("Store sizes do not match");
 		
 		for (String group : expected.keySet()) {
 			if (!actual.containsKey(group)) fail("some groups in expected where missing from actual");
 			
-			HashSet<String> expectedGroup = expected.get(group);
-			HashSet<String> actualGroup = actual.get(group);
+			HashSet<UUID> expectedGroup = expected.get(group);
+			HashSet<UUID> actualGroup = actual.get(group);
 			if (expectedGroup.size() != actualGroup.size()) fail("expected group size does not match actual"); 
 				
-			for (String player : expectedGroup) {
+			for (UUID player : expectedGroup) {
 				if (!actualGroup.contains(player)) fail ("Some players in actual group where missing");
 			}
 		}

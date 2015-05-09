@@ -18,7 +18,7 @@ public class ConcurrentPlayerLanguageStoreTest {
 				
 		ConcurrentPlayerLanguageStore store = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
 		
-		assertEquals("a", store.getLanguageForPlayer("someNonExistentName"));
+		assertEquals("a", store.getLanguageForPlayer(UUID.randomUUID()));
 	}
 	
 	@Test
@@ -26,8 +26,9 @@ public class ConcurrentPlayerLanguageStoreTest {
 				
 		ConcurrentPlayerLanguageStore store = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
 		
-		store.setLanguageForPlayer("somePlayer", "b");
-		assertEquals("b", store.getLanguageForPlayer("somePlayer"));
+		UUID somePlayerId = UUID.randomUUID();
+		store.setLanguageForPlayer(somePlayerId, "b");
+		assertEquals("b", store.getLanguageForPlayer(somePlayerId));
 	}
 	
 	@Test
@@ -35,9 +36,10 @@ public class ConcurrentPlayerLanguageStoreTest {
 				
 		ConcurrentPlayerLanguageStore store = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
 		
-		store.setLanguageForPlayer("somePlayer", "b");
-		store.setLanguageForPlayer("somePlayer", "c");
-		assertEquals("c", store.getLanguageForPlayer("somePlayer"));
+		UUID somePlayerId = UUID.randomUUID();
+		store.setLanguageForPlayer(somePlayerId, "b");
+		store.setLanguageForPlayer(somePlayerId, "c");
+		assertEquals("c", store.getLanguageForPlayer(somePlayerId));
 	}
 	
 	@Test
@@ -45,12 +47,14 @@ public class ConcurrentPlayerLanguageStoreTest {
 				
 		ConcurrentPlayerLanguageStore store = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
 		
-		store.setLanguageForPlayer("player1", "b");
-		store.setLanguageForPlayer("player2", "c");
-		Map<String, String> allPlayerLangs = store.getAllPlayerLanguages();
-		Map<String, String> modifiableCopy = new HashMap<String, String>(allPlayerLangs);
-		assertEquals("b", modifiableCopy.remove("player1"));
-		assertEquals("c", modifiableCopy.remove("player2"));
+		UUID somePlayerId1 = UUID.randomUUID();
+		UUID somePlayerId2 = UUID.randomUUID();
+		store.setLanguageForPlayer(somePlayerId1, "b");
+		store.setLanguageForPlayer(somePlayerId2, "c");
+		Map<UUID, String> allPlayerLangs = store.getAllPlayerLanguages();
+		Map<UUID, String> modifiableCopy = new HashMap<UUID, String>(allPlayerLangs);
+		assertEquals("b", modifiableCopy.remove(somePlayerId1));
+		assertEquals("c", modifiableCopy.remove(somePlayerId2));
 		assertEquals(0, modifiableCopy.size());
 	}
 	
@@ -59,12 +63,14 @@ public class ConcurrentPlayerLanguageStoreTest {
 				
 		ConcurrentPlayerLanguageStore store = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
 		
-		store.setLanguageForPlayer("player1", "b");
-		store.setLanguageForPlayer("player2", "c");
-		store.clearLanguageForPlayer("player1");
-		Map<String, String> allPlayerLangs = store.getAllPlayerLanguages();
-		Map<String, String> modifiableCopy = new HashMap<String, String>(allPlayerLangs);
-		assertEquals("c", modifiableCopy.remove("player2"));
+		UUID somePlayerId1 = UUID.randomUUID();
+		UUID somePlayerId2 = UUID.randomUUID();
+		store.setLanguageForPlayer(somePlayerId1, "b");
+		store.setLanguageForPlayer(somePlayerId2, "c");
+		store.clearLanguageForPlayer(somePlayerId1);
+		Map<UUID, String> allPlayerLangs = store.getAllPlayerLanguages();
+		Map<UUID, String> modifiableCopy = new HashMap<UUID, String>(allPlayerLangs);
+		assertEquals("c", modifiableCopy.remove(somePlayerId2));
 		assertEquals(0, modifiableCopy.size());
 	}
 	
@@ -73,49 +79,55 @@ public class ConcurrentPlayerLanguageStoreTest {
 				
 		ConcurrentPlayerLanguageStore store = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
 
-		Map<String, String> allPlayerLangs = store.getAllPlayerLanguages();
+		Map<UUID, String> allPlayerLangs = store.getAllPlayerLanguages();
 		allPlayerLangs.remove("anything");
 	}
 	
 	@Test
 	public void testMultiLanguageSetAddsAllConfiguration() {
-		Map<String, String> configToAdd = new HashMap<String, String>();
-		configToAdd.put("somePlayer1", "a");
-		configToAdd.put("somePlayer2", "b");
+		UUID somePlayerId1 = UUID.randomUUID();
+		UUID somePlayerId2 = UUID.randomUUID();
+		
+		Map<UUID, String> configToAdd = new HashMap<UUID, String>();
+		configToAdd.put(somePlayerId1, "a");
+		configToAdd.put(somePlayerId2, "b");
 		
 		ConcurrentPlayerLanguageStore store = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
 		
 		store.setPlayerLanguages(configToAdd);
 		
-		for (Entry<String, String> configPair : configToAdd.entrySet()) {
+		for (Entry<UUID, String> configPair : configToAdd.entrySet()) {
 			assertEquals(configPair.getValue(), store.getLanguageForPlayer(configPair.getKey()));
 		}
 	}
 	
 	@Test
 	public void testMultiLanguageSetOverridesExistingConfiguration() {
-		Map<String, String> configToAdd = new HashMap<String, String>();
-		configToAdd.put("somePlayer1", "b");
+		UUID somePlayerId1 = UUID.randomUUID();
+		Map<UUID, String> configToAdd = new HashMap<UUID, String>();
+		configToAdd.put(somePlayerId1, "b");
 		
 		ConcurrentPlayerLanguageStore store = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
-		store.setLanguageForPlayer("somePlayer1", "z");
+		store.setLanguageForPlayer(somePlayerId1, "z");
 		
 		store.setPlayerLanguages(configToAdd);
 		
-		assertEquals("b", store.getLanguageForPlayer("somePlayer1"));
+		assertEquals("b", store.getLanguageForPlayer(somePlayerId1));
 	}
 	
 	@Test
 	public void testMultiLanguageSetLeavesOtherConfigUntouched() {
-		Map<String, String> configToAdd = new HashMap<String, String>();
-		configToAdd.put("somePlayer1", "b");
+		UUID somePlayerId1 = UUID.randomUUID();
+		UUID somePlayerId2 = UUID.randomUUID();
+		Map<UUID, String> configToAdd = new HashMap<UUID, String>();
+		configToAdd.put(somePlayerId1, "b");
 		
 		ConcurrentPlayerLanguageStore store = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
-		store.setLanguageForPlayer("somePlayer2", "z");
+		store.setLanguageForPlayer(somePlayerId2, "z");
 		
 		store.setPlayerLanguages(configToAdd);
 		
-		assertEquals("z", store.getLanguageForPlayer("somePlayer2"));
+		assertEquals("z", store.getLanguageForPlayer(somePlayerId2));
 	}
 	
 	@Test

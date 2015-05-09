@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.UUID;
 
 import org.gamesforpeace.tongues.ConcurrentPlayerLanguageStore;
 import org.gamesforpeace.tongues.PlayerLanguageStore;
@@ -78,9 +79,9 @@ public class PlayerLanguageStorePersisterTest {
 	private PlayerLanguageStore getPreFilledLanguageStore()
 	{
 		PlayerLanguageStore langStore = new ConcurrentPlayerLanguageStore(new HashSet<String>(), "a");
-		langStore.setLanguageForPlayer("player1", "lang1");
-		langStore.setLanguageForPlayer("player2", "lang2");
-		langStore.setLanguageForPlayer("player3", "lang3");
+		langStore.setLanguageForPlayer(UUID.randomUUID(), "lang1");
+		langStore.setLanguageForPlayer(UUID.randomUUID(), "lang2");
+		langStore.setLanguageForPlayer(UUID.randomUUID(), "lang3");
 		
 		return langStore;
 	}

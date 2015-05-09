@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.Validate;
@@ -49,7 +50,7 @@ public class PlayerGroupsPersister {
 		return dataFile;
 	}
 	
-	public boolean persist(HashMap<String, HashSet<String>> playerGroups) {
+	public boolean persist(HashMap<String, HashSet<UUID>> playerGroups) {
 		File outputDataFile = getDataFile();
 		if (outputDataFile != null) {
 			
@@ -59,7 +60,7 @@ public class PlayerGroupsPersister {
 				BufferedWriter writer = new BufferedWriter(osw);
 				
 				try{
-					Type storedType = new TypeToken<HashMap<String, HashSet<String>>>() { }.getType();
+					Type storedType = new TypeToken<HashMap<String, HashSet<UUID>>>() { }.getType();
 					writer.write(gson.toJson(playerGroups, storedType));
 				} finally {
 					writer.close();
@@ -79,7 +80,7 @@ public class PlayerGroupsPersister {
 		return false;
 	}
 	
-	public HashMap<String, HashSet<String>> load() {
+	public HashMap<String, HashSet<UUID>> load() {
 		File inputDataFile = getDataFile();
 		if (inputDataFile != null) {
 			
@@ -87,8 +88,8 @@ public class PlayerGroupsPersister {
 				InputStreamReader isr = new InputStreamReader( new FileInputStream(inputDataFile), Charsets.UTF_8);
 				JsonReader reader = new JsonReader(isr);
 				
-				Type typeOfHashMap = new TypeToken<HashMap<String, HashSet<String>>>() { }.getType();
-				HashMap<String, HashSet<String>> playerGroups = gson.fromJson(reader, typeOfHashMap);
+				Type typeOfHashMap = new TypeToken<HashMap<String, HashSet<UUID>>>() { }.getType();
+				HashMap<String, HashSet<UUID>> playerGroups = gson.fromJson(reader, typeOfHashMap);
 				
 				reader.close();
 				
