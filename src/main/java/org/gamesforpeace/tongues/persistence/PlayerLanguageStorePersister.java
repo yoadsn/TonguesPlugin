@@ -19,6 +19,7 @@ import org.apache.commons.lang.Validate;
 import org.gamesforpeace.tongues.PlayerLanguageStore;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -68,7 +69,8 @@ public class PlayerLanguageStorePersister {
 				} finally {
 					writer.close();
 				}
-				
+		
+				dataFile = null;
 				return true;
 			} catch (FileNotFoundException e) {
 				logger.warning(e.toString());
@@ -80,14 +82,13 @@ public class PlayerLanguageStorePersister {
 			
 		}
 		
+		dataFile = null;
 		return false;
 	}
 	
 	public boolean load(PlayerLanguageStore langStore) {
 		File inputDataFile = getDataFile();
 		if (inputDataFile != null) {
-			
-			
 			try {
 				InputStreamReader isr = new InputStreamReader( new FileInputStream(inputDataFile), Charsets.UTF_8);
 				JsonReader reader = new JsonReader(isr);
@@ -105,6 +106,16 @@ public class PlayerLanguageStorePersister {
 			} catch (IOException e) {
 				logger.warning(e.toString());
 			} catch (Exception e) {
+				logger.warning(e.toString());
+			}
+		}
+		
+		if (inputDataFile.exists()) {
+			logger.info("Possible format error. Copying old language store file aside before it is overridden with a new empty store file in the correct format.");
+			File badFormatFile = new File(datafolder, "bad_format_" + storageFileName);
+			try {
+				Files.copy(inputDataFile, badFormatFile);
+			} catch (IOException e) {
 				logger.warning(e.toString());
 			}
 		}

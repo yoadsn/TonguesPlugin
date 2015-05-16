@@ -103,10 +103,10 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		try {
 			PlayerLanguageStorePersister langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), LANG_STORE_FILENAME, getLogger());
 			if (!langStorePersister.load(langStore)) {
-				getLogger().warning("Could not load player languages configuration file upon plugin enable.");
+				getLogger().warning("Could not load player languages configuration file upon plugin enable. Did you migrate to UUIDs? Skipping.");
 			}
 		} catch (IOException e) {
-			getLogger().warning("Unable to access player languages persistence store for loading. Skipping.");
+			getLogger().warning("Unable to access player languages persistence store for loading. Did you migrate to UUIDs? Skipping.");
 		}
 	}
 
@@ -119,7 +119,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		
 		if (groupsStore == null) {
 			groupsStore = new HashMap<String, HashSet<UUID>>();
-			getLogger().warning("Unable to access player groups persistence store for loading. Skipping.");
+			getLogger().warning("Unable to access player groups persistence store for loading. Did you migrate to UUIDs? Skipping.");
 		}
 	}
  

@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.Validate;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -99,6 +100,16 @@ public class PlayerGroupsPersister {
 			} catch (IOException e) {
 				logger.warning(e.toString());
 			} catch (Exception e) {
+				logger.warning(e.toString());
+			}
+		}
+		
+		if (inputDataFile.exists()) {
+			logger.info("Possible format error. Copying old groups store file aside before it is overridden with a new empty store file in the correct format.");
+			File badFormatFile = new File(datafolder, "bad_format_" + storageFileName);
+			try {
+				Files.copy(inputDataFile, badFormatFile);
+			} catch (IOException e) {
 				logger.warning(e.toString());
 			}
 		}
