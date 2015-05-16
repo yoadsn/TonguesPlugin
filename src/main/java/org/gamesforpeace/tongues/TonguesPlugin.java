@@ -220,7 +220,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 	}
 
 	public Set<Player> getAllOnlinePlayers() {
-		return new CopyOnWriteArraySet<Player>(Arrays.asList(getServer().getOnlinePlayers()));
+		return new CopyOnWriteArraySet<Player>(getServer().getOnlinePlayers());
 	}
 
 	public Set<Player> getGroupPlayers(String groupName) {

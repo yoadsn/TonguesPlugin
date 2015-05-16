@@ -1,4 +1,4 @@
-#Tongues - Translation plugin for Bukkit MC server
+#Tongues - Translation plugin for Bukkit/Spigot MC server
 
 Tongues implements real time translation support for messages between players and extends the basic chat services to include other useful features. Currently only the Bing translation API as the translation service.
 
@@ -16,6 +16,7 @@ This is quite a stable version, any issues or feature requests are welcome!
 - Alloes listening to all chats taking place on the server
 - Logs chat messages to files and/or [LogEntries](logentries.com)
 - Configuration store files use the player UUID since version 1.3
+- Compatible with Spigot 1.8+ server
 
 ##Installation
 - Drop the JAR in the plugins folder
@@ -146,6 +147,9 @@ The config.yml file can configure the following for chat logging:
 **Note:** The logger will not log whisper commands which arrived at no one.
 
 ##Latest Changes
+
+Since 1.4:
+- Compatible with Spigot 1.8.3 servers
 
 Since 1.3:
 - Groups and Languages store files use UUID. Old configuration file are not compatible and needs to be recreated. (No migration tool is available)

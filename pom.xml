@@ -4,7 +4,7 @@
 
 	<groupId>org.gamesforpeace</groupId>
 	<artifactId>TonguesPlugin</artifactId>
-	<version>1.3</version>
+	<version>1.4</version>
 	<packaging>jar</packaging>
 
 	<name>TonguesPlugin</name>
@@ -28,9 +28,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.7.9-R0.2</version>
+			<groupId>org.spigotmc</groupId>
+          	<artifactId>spigot-api</artifactId>
+          	<version>1.8.3-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.memetix</groupId>
@@ -72,7 +72,6 @@
 					<artifactSet>
 						<includes>
 							<include>com.memetix:microsoft-translator-java-api</include>
-							<include>com.google.code.gson:gson</include>
 							<include>com.logentries:logentries-appender</include>
 						</includes>
 					</artifactSet>
@@ -88,10 +87,6 @@
 								<relocation>
 									<pattern>com.memetix</pattern>
 									<shadedPattern>org.gamesforpeace.memetix</shadedPattern>
-								</relocation>
-								<relocation>
-									<pattern>com.google.code.gson</pattern>
-									<shadedPattern>org.gamesforpeace.gson</shadedPattern>
 								</relocation>
 								<relocation>
 									<pattern>com.logentries</pattern>
@@ -133,8 +128,8 @@
 
 	<repositories>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 
