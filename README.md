@@ -1,5 +1,8 @@
 #Tongues - Translation plugin for Bukkit/Spigot MC server
 
+##Status
+[![Build Status](https://travis-ci.org/yoadsn/TonguesPlugin.svg?branch=SpigotMigration)](https://travis-ci.org/yoadsn/TonguesPlugin)
+
 Tongues implements real time translation support for messages between players and extends the basic chat services to include other useful features. Currently only the Bing translation API as the translation service.
 
 This is quite a stable version, any issues or feature requests are welcome!
