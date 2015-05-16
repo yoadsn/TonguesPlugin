@@ -15,6 +15,7 @@ This is quite a stable version, any issues or feature requests are welcome!
 - Allows definition of player groups, and sending chat messages to these groups
 - Alloes listening to all chats taking place on the server
 - Logs chat messages to files and/or [LogEntries](logentries.com)
+- Configuration store files use the player UUID since version 1.3
 
 ##Installation
 - Drop the JAR in the plugins folder
@@ -84,8 +85,8 @@ So for example, a "French" configured player might still send some "English" tex
 
 ##Language Configuration
 Language settings per player are stored in the file **langStore.json** in the plugin's data folder.
-This file contains a single JSON object. The keys of this object are the player name and the values are the language.
-Configuration of the language is stored in the file when the plugin is disabled and read then the plugin is enabled.
+This file contains a single JSON object. The keys of this object are the player UUID and the values are the language.
+Configuration of the language is stored in the file when the plugin is disabled and read when the plugin is enabled.
 It is possible to edit the configuration with a normal text editor but please note:
 - The file must contain a single valid JSON object in the format described above.
 - A restart of the plugin is required to read configuration which was edited directly in the file.
@@ -93,15 +94,15 @@ It is possible to edit the configuration with a normal text editor but please no
 Example of a valid language configuration JSON object:
 ```JSON
 {
-  "playerName1": "arabic",
-  "playerName2": "hebrew"
+  "player1UUID": "arabic",
+  "player2UUID": "hebrew"
 }
 ```
 
 ##Groups Configuration
-A Player can belong to a group (or more then one).
+A Player can belong to zero or more groups.
 To define the groups create a file called **groupsStore.json** in the plugin's data folder.
-The file contains a single JSON object. The keys of this object are the group name and the values are the group member players.
+The file contains a single JSON object. The keys of this object are the group name and the values are the group member players' UUID's.
 Each value is a JSON Array with string values for each player in the group.
 
 - The file must contain a single valid JSON object in the format described above.
@@ -113,8 +114,8 @@ Example of a valid groups configuration JSON object:
 ```JSON
 {
 	"blueGroup" : [
-		"playerName1",
-		"playerName2"
+		"player1UUID",
+		"player2UUID"
 	]
 }
 ```
@@ -145,6 +146,9 @@ The config.yml file can configure the following for chat logging:
 **Note:** The logger will not log whisper commands which arrived at no one.
 
 ##Latest Changes
+
+Since 1.3:
+- Groups and Languages store files use UUID. Old configuration file are not compatible and needs to be recreated. (No migration tool is available)
 
 Since 1.2:
 - Added chat logging support using a file logger and/or logentries logger.

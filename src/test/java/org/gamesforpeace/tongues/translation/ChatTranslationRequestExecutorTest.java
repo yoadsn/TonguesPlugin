@@ -234,7 +234,7 @@ public class ChatTranslationRequestExecutorTest {
 
 		// Default Values
 		private String defaultLang;
-		private String defaultSourcePlayerName;
+		private UUID defaultSourcePlayerId;
 		private String defaultSourcePlayerLanguage;
 
 		private String defaultSourceMessage;
@@ -243,7 +243,7 @@ public class ChatTranslationRequestExecutorTest {
 		private SUTBuilder() {
 			defaultLang = "";
 			
-			defaultSourcePlayerName = "someSourcePlayerName";
+			defaultSourcePlayerId = UUID.randomUUID();
 			defaultSourcePlayerLanguage = "English";
 
 			defaultSourceMessage = "SRCMSG";
@@ -277,22 +277,20 @@ public class ChatTranslationRequestExecutorTest {
 
 			sourcePlayer = mock(Player.class);
 
-			int destPlayersIndex = 1;
 			for (String destPlayerLang : destPlayerLangs) {
 				Player destPlayer = mock(Player.class);
-				String destPlayerName = "someDestPlayer" + String.valueOf(destPlayersIndex); 
-				when(destPlayer.getName()).thenReturn(destPlayerName);
-				when(langStore.getLanguageForPlayer(destPlayerName)).thenReturn(
+				UUID destPlayerId = UUID.randomUUID();
+				when(destPlayer.getUniqueId()).thenReturn(destPlayerId);
+				when(langStore.getLanguageForPlayer(destPlayerId)).thenReturn(
 						destPlayerLang);
 
 				destPlayers.add(destPlayer);
-				destPlayersIndex++;
 			}
 
 			// Stubs
-			when(sourcePlayer.getName())
-					.thenReturn(defaultSourcePlayerName);
-			when(langStore.getLanguageForPlayer(defaultSourcePlayerName))
+			when(sourcePlayer.getUniqueId())
+					.thenReturn(defaultSourcePlayerId);
+			when(langStore.getLanguageForPlayer(defaultSourcePlayerId))
 					.thenReturn(defaultSourcePlayerLanguage);
 
 			when(

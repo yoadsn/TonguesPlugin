@@ -12,12 +12,14 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.Validate;
 import org.gamesforpeace.tongues.PlayerLanguageStore;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -54,7 +56,7 @@ public class PlayerLanguageStorePersister {
 	public boolean persist(PlayerLanguageStore langStore) {
 		File outputDataFile = getDataFile();
 		if (outputDataFile != null) {
-			Map<String, String> allPlayerLangs = langStore.getAllPlayerLanguages();
+			Map<UUID, String> allPlayerLangs = langStore.getAllPlayerLanguages();
 			
 			try {
 				
@@ -62,12 +64,13 @@ public class PlayerLanguageStorePersister {
 				BufferedWriter writer = new BufferedWriter(osw);
 				
 				try{
-					Type typeOfHashMap = new TypeToken<Map<String, String>>() { }.getType();
+					Type typeOfHashMap = new TypeToken<Map<UUID, String>>() { }.getType();
 					writer.write(gson.toJson(allPlayerLangs, typeOfHashMap));
 				} finally {
 					writer.close();
 				}
-				
+		
+				dataFile = null;
 				return true;
 			} catch (FileNotFoundException e) {
 				logger.warning(e.toString());
@@ -79,20 +82,19 @@ public class PlayerLanguageStorePersister {
 			
 		}
 		
+		dataFile = null;
 		return false;
 	}
 	
 	public boolean load(PlayerLanguageStore langStore) {
 		File inputDataFile = getDataFile();
 		if (inputDataFile != null) {
-			
-			
 			try {
 				InputStreamReader isr = new InputStreamReader( new FileInputStream(inputDataFile), Charsets.UTF_8);
 				JsonReader reader = new JsonReader(isr);
 				
-				Type typeOfHashMap = new TypeToken<Map<String, String>>() { }.getType();
-				Map<String, String> allPlayerLangs = gson.fromJson(reader, typeOfHashMap);
+				Type typeOfHashMap = new TypeToken<Map<UUID, String>>() { }.getType();
+				Map<UUID, String> allPlayerLangs = gson.fromJson(reader, typeOfHashMap);
 
 				langStore.setPlayerLanguages(allPlayerLangs);
 				
@@ -104,6 +106,16 @@ public class PlayerLanguageStorePersister {
 			} catch (IOException e) {
 				logger.warning(e.toString());
 			} catch (Exception e) {
+				logger.warning(e.toString());
+			}
+		}
+		
+		if (inputDataFile.exists()) {
+			logger.info("Possible format error. Copying old language store file aside before it is overridden with a new empty store file in the correct format.");
+			File badFormatFile = new File(datafolder, "bad_format_" + storageFileName);
+			try {
+				Files.copy(inputDataFile, badFormatFile);
+			} catch (IOException e) {
 				logger.warning(e.toString());
 			}
 		}

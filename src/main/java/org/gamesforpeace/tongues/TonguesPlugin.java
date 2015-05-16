@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.bukkit.Bukkit;
@@ -32,7 +33,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 	private ListenCommandExecutor listenCommandExecutor;
 	private PlayerLanguageStore langStore;
 	private ChatLogger chatLogger = null;
-	private HashMap<String, HashSet<String>> groupsStore;
+	private HashMap<String, HashSet<UUID>> groupsStore;
 	
 	@Override
     public void onEnable(){
@@ -102,10 +103,10 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		try {
 			PlayerLanguageStorePersister langStorePersister = new PlayerLanguageStorePersister(getDataFolder(), LANG_STORE_FILENAME, getLogger());
 			if (!langStorePersister.load(langStore)) {
-				getLogger().warning("Could not load player languages configuration file upon plugin enable.");
+				getLogger().warning("Could not load player languages configuration file upon plugin enable. Did you migrate to UUIDs? Skipping.");
 			}
 		} catch (IOException e) {
-			getLogger().warning("Unable to access player languages persistence store for loading. Skipping.");
+			getLogger().warning("Unable to access player languages persistence store for loading. Did you migrate to UUIDs? Skipping.");
 		}
 	}
 
@@ -117,8 +118,8 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		}
 		
 		if (groupsStore == null) {
-			groupsStore = new HashMap<String, HashSet<String>>();
-			getLogger().warning("Unable to access player groups persistence store for loading. Skipping.");
+			groupsStore = new HashMap<String, HashSet<UUID>>();
+			getLogger().warning("Unable to access player groups persistence store for loading. Did you migrate to UUIDs? Skipping.");
 		}
 	}
  
@@ -142,7 +143,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		final Player sendFrom = source;
 		final Player sendTo = dest;
 		final String sendMessage = message;
-		final String destinationLanguage = langStore.getLanguageForPlayer(sendTo.getName());
+		final String destinationLanguage = langStore.getLanguageForPlayer(sendTo.getUniqueId());
 		
 		new BukkitRunnable() {
 			
@@ -209,9 +210,13 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 	public void postCommand(CommandSender sender, String commandLine) {
 		Bukkit.dispatchCommand(sender, commandLine);
 	}
-
+	
 	public Player getOnlinePlayer(String name) {
 		return getServer().getPlayer(name);
+	}
+
+	public Player getOnlinePlayer(UUID id) {
+		return getServer().getPlayer(id);
 	}
 
 	public Set<Player> getAllOnlinePlayers() {
@@ -221,11 +226,11 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 	public Set<Player> getGroupPlayers(String groupName) {
 		if (groupsStore.containsKey(groupName)) {
 
-			HashSet<String> groupPlayerNames = groupsStore.get(groupName); 
+			HashSet<UUID> groupPlayerIds = groupsStore.get(groupName); 
 			
-			Set<Player> groupPlayers = new HashSet<Player>(groupPlayerNames.size());
-			for (String name : groupPlayerNames) {
-				Player player = getOnlinePlayer(name);
+			Set<Player> groupPlayers = new HashSet<Player>(groupPlayerIds.size());
+			for (UUID id : groupPlayerIds) {
+				Player player = getOnlinePlayer(id);
 				if (player != null) {
 					groupPlayers.add(player);
 				}
