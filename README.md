@@ -108,8 +108,6 @@ Each value is a JSON Array with string values for each player in the group.
 - The file must contain a single valid JSON object in the format described above.
 - A restart of the plugin is required to read configuration which was edited directly in the file.
 
-Currently modifying group membership is supported by file editing and not with in-game commands.
-
 Example of a valid groups configuration JSON object:
 ```JSON
 {
@@ -119,6 +117,19 @@ Example of a valid groups configuration JSON object:
 	]
 }
 ```
+
+The server would load the JSON file groups when started.
+During server run time, the groups can be modified using the `add` and `remove` commands:
+
+/tg add [group name] [player UUID]
+group name - Any string or * for all groups
+player UUID - The UUID of the player
+
+/tg remove [group name] [player UUID]
+group name - Any string or * for all groups
+player UUID - The UUID of the player or * for all players
+
+Currently - Saving the changes to the JSON file or reloading from it is not supported.
 
 ##Chat Logging
 The plugin logs chat messages, their sender, receiver, and the message that was sent as it was formatted.
@@ -146,6 +157,9 @@ The config.yml file can configure the following for chat logging:
 **Note:** The logger will not log whisper commands which arrived at no one.
 
 ##Latest Changes
+
+Since 1.4:
+- Groups administration commands partially implemented (missing list, save, reload commands)
 
 Since 1.3:
 - Groups and Languages store files use UUID. Old configuration file are not compatible and needs to be recreated. (No migration tool is available)

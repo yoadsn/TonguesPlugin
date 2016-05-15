@@ -32,6 +32,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 	private TranslationRequestExecutor translationRequestExecutor;
 	private ListenCommandExecutor listenCommandExecutor;
 	private PlayerLanguageStore langStore;
+	private GroupAdminCommandExecutor groupAdminCommandExecutor;
 	private ChatLogger chatLogger = null;
 	private HashMap<String, HashSet<UUID>> groupsStore;
 	
@@ -49,6 +50,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		LoadPlayerLanguages();
 		
 		LoadGroups();
+		groupAdminCommandExecutor = new GroupAdminCommandExecutor(groupsStore);
 		
 		setupChatLoggers();
 		
@@ -62,6 +64,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		getServer().getPluginCommand("tongues.whisper").setExecutor(createWhisperCommandExecutor());
 		getServer().getPluginCommand("tongues.talk").setExecutor(new TalkCommandExecutor(this, this, this, this));
 		getServer().getPluginCommand("tongues.listen").setExecutor(listenCommandExecutor);
+		getServer().getPluginCommand("tongues.groups").setExecutor(groupAdminCommandExecutor);
     }
 
 	private WhisperCommandExecutor createWhisperCommandExecutor() {
