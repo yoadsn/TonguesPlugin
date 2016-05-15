@@ -122,12 +122,12 @@ The server would load the JSON file groups when started.
 During server run time, the groups can be modified using the `add` and `remove` commands:
 
 /tg add [group name] [player UUID]
-group name - Any string or * for all groups
-player UUID - The UUID of the player
+- group name - Any string or * for all groups
+- player UUID - The UUID of the player
 
 /tg remove [group name] [player UUID]
-group name - Any string or * for all groups
-player UUID - The UUID of the player or * for all players
+- group name - Any string or * for all groups
+- player UUID - The UUID of the player or * for all players
 
 Currently - Saving the changes to the JSON file or reloading from it is not supported.
 
