@@ -1,6 +1,6 @@
-#Tongues - Translation plugin for Bukkit MC server
+#Tongues - Translation plugin for Bukkit/Spigot MC server
 
-Tongues implements real time translation support for messages between players and extends the basic chat services to include other useful features. Currently only the Bing translation API as the translation service.
+Tongues implements real time translation support for messages between players and extends the basic chat services to include other useful features. Currently uses the Azure cognitive services text translation API.
 
 This is quite a stable version, any issues or feature requests are welcome!
 
@@ -157,6 +157,9 @@ The config.yml file can configure the following for chat logging:
 **Note:** The logger will not log whisper commands which arrived at no one.
 
 ##Latest Changes
+
+Since 1.5:
+- Migrated translation services to the new Azure cognitive text translation API. This is a beaking change and the comfiguration must change to include a valid subscription key for the new translation services.
 
 Since 1.4:
 - Groups administration commands partially implemented (missing list, save, reload commands)

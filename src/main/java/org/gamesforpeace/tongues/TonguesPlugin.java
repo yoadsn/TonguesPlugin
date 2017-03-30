@@ -43,7 +43,7 @@ public final class TonguesPlugin extends JavaPlugin implements ChatMessenger, Tr
 		saveDefaultConfig();
 		
 		//getLogger().fine("Using Bing Translation authentication values -> ClientID:" + getConfig().getString("bingTranslation.clientID") + " SecretKey:" + getConfig().getString("bingTranslation.secretKey"));
-		Translator translator = new BingTranslator(getConfig().getString("bingTranslation.clientID"), getConfig().getString("bingTranslation.secretKey"));
+		Translator translator = new BingTranslator(getConfig().getString("bingTranslation.subscriptionKey"));
 		
 		langStore = new ConcurrentPlayerLanguageStore(translator.getSupportedLanguages(),  translator.getDefaultLanguage());
 		

@@ -5,21 +5,19 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 
-import com.memetix.mst.language.Language;
-import com.memetix.mst.translate.Translate;
+import io.github.firemaples.language.Language;
+import io.github.firemaples.translate.Translate;
 
 public class BingTranslator implements Translator{
 	
 	private final HashSet<String> supportedLanguages;
 	
-	public BingTranslator(String clientID, String secretKey) {
+	public BingTranslator(String subscriptionKey) {
 		
-		Validate.notEmpty(clientID);
-		Validate.notEmpty(secretKey);
+		Validate.notEmpty(subscriptionKey);
 		
 		// Setup the translator service.
-		Translate.setClientId(clientID);
-		Translate.setClientSecret(secretKey);
+		Translate.setSubscriptionKey(subscriptionKey);
 		
 		// Populate supported languages list
 		supportedLanguages = new HashSet<String>();
