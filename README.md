@@ -1,10 +1,10 @@
-#Tongues - Translation plugin for Bukkit/Spigot MC server
+# Tongues - Translation plugin for Bukkit/Spigot MC server
 
 Tongues implements real time translation support for messages between players and extends the basic chat services to include other useful features. Currently uses the Azure cognitive services text translation API.
 
 This is quite a stable version, any issues or feature requests are welcome!
 
-##Main features
+## Main features
 - Translates on the fly chat messages
 - Provides a translated "WhisperWithinRadius" command
 - Uses the Bing Translation service (Requires an active account)
@@ -17,7 +17,7 @@ This is quite a stable version, any issues or feature requests are welcome!
 - Logs chat messages to files and/or [LogEntries](logentries.com)
 - Configuration store files use the player UUID since version 1.3
 
-##Installation
+## Installation
 - Drop the JAR in the plugins folder
 - Reload plugins or start the server
 - Edit the plygin.yml created in the plugin's data folder to set the Bing translation API ClientID and SecretKey
@@ -25,8 +25,8 @@ This is quite a stable version, any issues or feature requests are welcome!
 - Reload again
 - Give permissions
 
-##Commands
-###tongues.setlang###
+## Commands
+### tongues.setlang ###
 /setlang [language] - Will change the current language of the issuing player.
 
 permissions: Requires permission **tongues.setlang**
@@ -41,14 +41,14 @@ When [language] is **?** the command would query and display the current languag
 
 aliases: setlang, lang 
 
-###tongues.whisper###
+### tongues.whisper ###
 /whisper [message] - Whisper a message to every player in radius
 
 permissions: Requires permission **tongues.whisper**
 
 aliases: whisper
 
-###tongues.talk###
+### tongues.talk ###
 /talk [message] - Will whisper the message to any players around you
 
 permissions: Requires permission **tongues.talk** and **tongues.whisper**
@@ -64,7 +64,7 @@ permissions: Requires permission **tongues.talk.all**
 
 aliases: talk, t
 
-###tongues.listen###
+### tongues.listen ###
 /tl [on/off] - Enables or disables the global chat listening.
 
 permissions: Requires permission **tongues.listen**
@@ -73,7 +73,7 @@ permissions: Requires permission **tongues.listen**
 The plugin allows configuration of the radius to consider for whispering to players (same in all directions x/y/z) with the config.yml key:
 * *whisper.radius* (int) - Sets the whispering radius - default is 10
 
-##Translation Logic
+## Translation Logic
 When a message is sent, the language of the player receiving the message is used to translate the message.
 
 If no language is setup for this player, no translation is attempted or sent.
@@ -83,7 +83,7 @@ Currently, regardless of the sending player's configured language, an auto-detec
 
 So for example, a "French" configured player might still send some "English" text and expect it to be translated correctly to a "Russian" configured player.
 
-##Language Configuration
+## Language Configuration
 Language settings per player are stored in the file **langStore.json** in the plugin's data folder.
 This file contains a single JSON object. The keys of this object are the player UUID and the values are the language.
 Configuration of the language is stored in the file when the plugin is disabled and read when the plugin is enabled.
@@ -99,7 +99,7 @@ Example of a valid language configuration JSON object:
 }
 ```
 
-##Groups Configuration
+## Groups Configuration
 A Player can belong to zero or more groups.
 To define the groups create a file called **groupsStore.json** in the plugin's data folder.
 The file contains a single JSON object. The keys of this object are the group name and the values are the group member players' UUID's.
@@ -131,7 +131,7 @@ During server run time, the groups can be modified using the `add` and `remove` 
 
 Currently - Saving the changes to the JSON file or reloading from it is not supported.
 
-##Chat Logging
+## Chat Logging
 The plugin logs chat messages, their sender, receiver, and the message that was sent as it was formatted.
 When a message is sent to multiple receivers (such as a public message, or a whisper with more than one player around) it will log one row for each delivered message.
 When logging to files, chat logs are appended to a log file per server startup, organized in a month/day folder structure.
@@ -156,7 +156,7 @@ The config.yml file can configure the following for chat logging:
 
 **Note:** The logger will not log whisper commands which arrived at no one.
 
-##Latest Changes
+## Latest Changes
 
 Since 1.5:
 - Migrated translation services to the new Azure cognitive text translation API. This is a beaking change and the comfiguration must change to include a valid subscription key for the new translation services.
